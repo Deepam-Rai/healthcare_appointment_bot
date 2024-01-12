@@ -1,0 +1,43 @@
+version: "3.1"
+
+rules:
+
+- rule: Say bye anytime the user says bye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Login form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: login_form_intent
+  - action: login_form
+  - active_loop: login_form
+
+- rule: Login form deactivate
+  condition:
+  - active_loop: login_form
+  steps:
+  - action: login_form
+  - active_loop: login_form
+  - active_loop: null
+  - action: action_submit_login_form
+  
+- rule: Register form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: register_form_intent
+  - action: register_form
+  - active_loop: register_form
+
+- rule: Register form deactivate
+  condition:
+  - active_loop: register_form
+  steps:
+  - action: register_form
+  - active_loop: register_form
+  - active_loop: null
+  - action: action_submit_register_form
+  

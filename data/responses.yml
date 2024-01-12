@@ -1,0 +1,67 @@
+version: "3.1"
+
+responses:
+  utter_greet_response_1:
+  - text: "Hey! I am your appointment bot."
+
+  utter_greet_response_2:
+  - text: "Please login/register to continue:"
+    buttons:
+      - title: Login
+        payload: /login_form_intent
+      - title: Register
+        payload: /register_form_intent
+
+  utter_ask_email:
+  - text: "Please enter your Email-id:"
+  
+  utter_ask_name:
+    - text: "Please enter your Name:"
+  
+  utter_ask_phno:
+    - text: "Please enter your Phone number:"
+  
+  utter_ask_gender:
+    - text: "Please choose your Gender:"
+      buttons:
+        - title: Male
+          payload: /user_details_intent{{"gender":"male"}}
+        - title: Female
+          payload: /user_details_intent{{"gender":"female"}}
+        - title: Transgender
+          payload: /user_details_intent{{"gender":"trans"}}
+        - title: Non-binary
+          payload: /user_details_intent{{"gender":"non-binary"}}
+        - title: Prefer Not to say
+          payload: /user_details_intent{{"gender":"undisclosed"}}
+  
+  utter_otp_response:
+    - text: "Thank you for using Appointment Bot Plus.\nAn email has been sent to the above given mail-id.\n.Please enter the One-time Password(OTP) to successfully register."
+  
+  utter_register_confirmation_response:
+    - text: "Thank you for registering with us."
+  
+  utter_goodbye:
+    - text: "Bye"
+
+  utter_show_menu:
+    - text: Book Appointment
+      payload: /appointment_intent{{"menu_selection":"book"}}
+    - text: Get Appointment Details
+      payload: /appointment_intent{{"menu_selection":"get"}}
+    - text: Update Appointment Details
+      payload: /appointment_intent{{"menu_selection":"update"}}
+    - text: Delete Appointment
+      payload: /appointment_intent{{"menu_selection":"delete"}}
+
+  utter_which_doctor:
+    - text: "Select a doctor from the list of doctors given below for an appointment:"
+    
+  utter_appointment_date:
+    - text: "Please type in your date(dd/mm/yyyy) for the appointment:"
+    
+  utter_appointment_time:
+    - text: "Please select a time for the appointment: "
+    
+  utter_confirm_appointment_details:
+    - text: "Please confirm your appointment."
