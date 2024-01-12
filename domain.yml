@@ -85,6 +85,11 @@ slots:
     mappings:
       - type: from_entity
         entity: user_otp
+        conditions:
+          - active_loop: login_form
+            requested_slot: user_otp
+          - active_loop: register_form
+            requested_slot: user_otp
 
   generated_otp:
     type: text
