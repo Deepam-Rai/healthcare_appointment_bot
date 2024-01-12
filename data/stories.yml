@@ -1,0 +1,24 @@
+version: "3.1"
+
+stories:
+
+- story: Greeting to Login/Register to Displaying book, update, delete appointment, etc to user
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - action: action_login_register
+  - intent: login
+  - action: login_form
+  - active_loop: login_form
+  - active_loop: null
+  - action: action_submit_login_form
+  - action: action_all_options
+
+- story: For booking appointment
+  steps:
+  - intent: book
+  - action: book_form
+  - active_loop: book_form
+  - active_loop: null
+  - action: action_submit_book_form
+  - action: action_all_options

@@ -1,0 +1,115 @@
+version: "3.1"
+
+rules:
+
+- rule: Giving user option for either of login or register
+  steps:
+  - intent: login_register
+  - action: action_login_register
+
+- rule: login form - Activating
+  steps:
+  - intent: login
+  - action: login_form
+  - active_loop: login_form
+
+- rule: login form - Deactivate
+  condition:
+    - active_loop: login_form
+  steps:
+  - action: login_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_login_form
+  - action: action_all_options
+
+
+- rule: register form - Activating
+  steps:
+  - intent: register
+  - action: register_form
+  - active_loop: register_form
+
+- rule: register form - Deactivate
+  condition:
+    - active_loop: register_form
+  steps:
+  - action: register_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_register_form
+  - action: action_all_options
+
+
+- rule: book form - Activating
+  steps:
+  - intent: book
+  - action: book_form
+  - active_loop: book_form
+
+- rule: book form - Deactivate
+  condition:
+    - active_loop: book_form
+  steps:
+  - action: book_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_book_form
+  - action: action_all_options
+
+
+- rule: get_details_form - Activating
+  steps:
+  - intent: get_details
+  - action: get_details_form
+  - active_loop: get_details_form
+
+- rule: get_details form - Deactivate
+  condition:
+    - active_loop: get_details_form
+  steps:
+  - action: get_details_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_get_details_form
+  - action: action_all_options
+
+
+- rule: delete_form - Activating
+  steps:
+  - intent: delete
+  - action: delete_appt_form
+  - active_loop: delete_appt_form
+
+- rule: delete form - Deactivate
+  condition:
+    - active_loop: delete_appt_form
+  steps:
+  - action: delete_appt_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_delete_appt_form
+  - action: action_all_options
+
+
+- rule: update_form - Activating
+  steps:
+  - intent: update
+  - action: update_form
+  - active_loop: update_form
+
+- rule: update form - Deactivate
+  condition:
+    - active_loop: update_form
+  steps:
+  - action: update_form
+  - active_loop: null
+  - slot_was_set:
+      - requested_slot: null
+  - action: action_submit_update_form
+  - action: action_all_options

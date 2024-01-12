@@ -1,0 +1,452 @@
+version: "3.1"
+
+entities:
+  - name
+  - email
+  - phone_no
+  - confirm_register
+  - user_otp
+  - book_doctor
+  - time
+  - book_time
+  - book_confirm
+  - det_doctor
+  - det_appt
+  - det_choice
+  - del_doc
+  - del_appt
+  - del_otp
+  - update_doc
+  - update_appt
+  - update_doc_new
+  - update_time_new
+  - update_confirm
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - login
+  - register
+  - book
+  - get_details
+  - delete
+  - update
+  - login_register
+  - provide_email
+  - provide_otp
+  - general_intent
+  - provide_date
+  - provide_phone_no
+
+slots:
+  name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: login_form
+            requested_slot: name
+          - active_loop: register_form
+            requested_slot: name
+
+  email:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: email
+
+  phone_no:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+        - active_loop: register_form
+          requested_slot: phone_no
+#        entity: phone_no
+
+  confirm_register:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: confirm_register
+
+  user_otp:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: user_otp
+
+  generated_otp:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  # book form slots
+  book_doctor:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: book_doctor
+
+  book_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: time
+        conditions:
+        - active_loop: book_form
+          requested_slot: book_date
+
+  book_time:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: book_time
+
+  book_confirm:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: book_confirm
+
+  # get_details_form slots
+  det_doctor:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: det_doctor
+  det_appt:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: det_appt
+  det_choice:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: det_choice
+
+  #delete appointment slots
+  del_doc:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: del_doc
+
+  del_appt:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: del_appt
+
+  del_reason:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+        - active_loop: delete_form
+          requested_slot: del_reason
+
+  #update_form slots
+  update_doc:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_doc
+
+  update_appt:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_appt
+
+  update_reason:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+        - active_loop: update_form
+          requested_slot: update_reason
+
+  update_doc_new:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_doc_new
+
+  update_date_new:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: time
+
+  update_time_new:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_time_new
+
+  update_confirm:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_confirm
+
+
+
+responses:
+  utter_greet:
+  - text: "Hello! Nice to meet you! What would you like to do?"
+
+  utter_cheer_up:
+  - text: "Here is something to cheer you up:"
+    image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+  - text: "Did that help you?"
+
+  utter_happy:
+  - text: "Great, carry on!"
+
+  utter_goodbye:
+  - text: "Bye"
+
+  utter_iamabot:
+  - text: "I am a bot, powered by Rasa."
+
+  utter_ask_email:
+  - text: "Please provide your email:"
+
+  utter_ask_name:
+  - text: "What's your name?"
+
+  utter_ask_phone_no:
+  - text: "Please provide your phone no:"
+
+  utter_ask_otp:
+  - text: "Please input the OTP sent to your mail:"
+
+  utter_logged_in:
+  - text: "You are logged in!"
+
+  utter_signed_up:
+  - text: "You have successfully signed up!"
+
+  utter_login_register:
+  - text: ""
+    buttons:
+      - title: "Login"
+        payload: "/login"
+      - title: "Register"
+        payload: "/register"
+
+  utter_all_options:
+  - text: "What would you like to do?"
+    buttons:
+    - title: "Book an appointment"
+      payload: "/book"
+    - title: "Get appointments detail"
+      payload: "/get_details"
+    - title: "Delete appointment"
+      payload: "/delete"
+    - title: "Update appointment"
+      payload: "/update"
+
+  utter_select_doc:
+  - text: "Please select a doctor:"
+
+  utter_select_date:
+  - text: "Please select a date:"
+
+  utter_select_time:
+  - text: "Please select time:"
+
+  utter_otp_not_sent:
+  - text: "Sorry, we couldn't send the OTP. Please try again later."
+
+  utter_wrong_otp:
+  - text: "The OTP given by you doesnt match the one sent to your mail."
+
+  # book form responses
+  utter_select_book_date:
+  - text: "On which date would you like to book the appointment?"
+
+  utter_select_book_time:
+  - text: "Following are the available slots for doctor {book_doctor}, please select one:"
+
+  utter_ask_book_confirm:
+  - text: "So confirm appointment for doctor {book_doctor} on date {book_date} at time {book_time}?"
+    buttons:
+      - title: "Yes"
+        payload: /general_intent{{"book_confirm":"true"}}
+      - title: "Cancel"
+        payload: /general_intent{{"book_confirm":"false"}}
+
+  utter_booking_cancelled:
+  - text: "You have cancelled your appointment booking."
+
+  utter_booking_done:
+  - text: "Your appointment has been booked successfully!"
+
+  # get appointment details responses
+  utter_det_doctor:
+  - text: "Appointment made for whom would you wish to see?"
+
+  utter_det_appt:
+  - text: "Please select appointment to see its details."
+
+  utter_ask_det_choice:
+  - text: "What would you like to do?"
+    buttons:
+      - title: "See Details"
+        payload: /general_intent{{"det_choice":"details"}}
+      - title: "Update"
+        payload: /general_intent{{"det_choice":"update"}}
+      - title: "Delete"
+        payload: /general_intent{{"det_choice":"delete"}}
+
+  utter_appt_details:
+    - text: "Your appointment is on date {date} at time {time} with docotr {doctor}."
+
+  # delete_appt_form responses
+  utter_del_doctor:
+  - text: "Appointment with whom would you like to delete?"
+
+  utter_del_appt:
+  - text: "Which appointment would you wish to delete?"
+
+  utter_ask_del_reason:
+  - text: "Would you mind sharing reason for cancelling the appointment?"
+
+  utter_appt_deleted:
+  - text: "The appointment has been cancelled."
+
+  # update_form responses
+  utter_appt_updated:
+  - text: "The appointment has been updated."
+
+  utter_update_doc:
+  - text: "Whose appointment would you like to update?"
+
+  utter_update_appt:
+  - text: "Which appointnment would you like to update?"
+
+  utter_ask_update_reason:
+  - text: "Could you share your reason for updating the appointment?"
+
+  utter_update_doc_new:
+  - text: "With whom would you like to have new appointment?"
+
+  utter_select_update_date:
+  - text: "To which date would you like to update the appointment?"
+
+  utter_select_update_time:
+  - text: "Please select one of the available slots:"
+
+  utter_ask_update_confirm:
+  - text: "Your appointment with doctor {update_doc} will be cancelled and new appointment with doctor {update_doc_new} on {update_date_new} at {update_time_new} will be made. Continue?"
+    buttons:
+      - title: "Yes"
+        payload: /general_intent{{"update_confirm":"true"}}
+      - title: "No"
+        payload: /general_intent{{"update_confirm":"false"}}
+
+
+forms:
+  login_form:
+    required_slots:
+      - email
+      - user_otp
+  register_form:
+    required_slots:
+      - name
+      - email
+      - phone_no
+      - user_otp
+  book_form:
+    required_slots:
+      - book_doctor
+      - book_date
+      - book_time
+      - book_confirm
+  get_details_form:
+    required_slots:
+      - det_doctor
+      - det_appt
+      - det_choice
+  delete_appt_form:
+    required_slots:
+      - del_doc
+      - del_appt
+      - del_reason
+      - user_otp
+  update_form:
+    required_slots:
+      - update_doc
+      - update_appt
+      - update_reason
+      - update_doc_new
+      - update_date_new
+      - update_time_new
+      - update_confirm
+      - user_otp
+
+
+actions:
+  - action_login_register
+  - action_all_options
+  - validate_login_form
+  - action_submit_login_form
+  - action_submit_register_form
+  - action_ask_user_otp
+  - action_ask_book_doctor
+  - action_ask_book_date
+  - action_ask_book_time
+  - action_submit_book_form
+  - action_ask_det_doctor
+  - action_ask_det_appt
+  - action_submit_get_details_form
+  - action_ask_del_doc
+  - action_ask_del_appt
+  - action_ask_del_otp
+  - action_submit_delete_appt_form
+  - action_ask_update_doc
+  - action_ask_update_appt
+  - action_ask_update_doc_new
+  - action_ask_update_date_new
+  - action_ask_update_time_new
+  - action_submit_update_form
+
+
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

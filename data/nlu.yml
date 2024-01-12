@@ -1,0 +1,124 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+- intent: provide_email
+  examples: |
+    - [abcde@gmail.com](email)
+    - [ab123@mail.com](email)
+    - My email is [email@somemail.com](email)
+    - My mail address is [someone@somemail.com](email)
+
+- intent: provide_otp
+  examples: |
+    - [2345](user_otp)
+    - [1234](user_otp)
+    - [9837](user_otp)
+    - OTP is [9475](user_otp).
+    - Sent OTP is [0273](user_otp).
+    - I got the OTP [8475](user_otp).
+
+- intent: provide_date
+  examples: |
+    - 12-03-2023
+    - 23/04/2001
+    - 12.07.2025
+    - On date 23/01/2023
+    - On Jan 1st, 2017
+    - On 23rd December 1998.
+    - On 23rd December 1998.
+
+#- intent: provide_phone_no
+#  examples: |
+#    - [1234543216](phone_no)
+#    - My contact no is [3456384756](phone_no).
+#    - My phone number is [9284629563](phone_no).
+#    - Phone no is [8653044927](phone_no).
