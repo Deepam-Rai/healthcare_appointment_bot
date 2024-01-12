@@ -21,8 +21,13 @@ class ValidateRegisterForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_register_form"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    async def validate_otp(self, value: Text,
+                           dispatcher: "CollectingDispatcher",
+                           tracker: "Tracker",
+                           domain: "DomainDict") -> Dict[str, str]:
+        gen_otp = tracker.get_slot("generated_otp")
+        if value == gen_otp:
+            return {"otp": value}
+        else:
+            return {"requested_slot": "otp"}
 
-        return []

@@ -36,7 +36,7 @@ responses:
           payload: /user_details_intent{{"gender":"undisclosed"}}
   
   utter_otp_response:
-    - text: "Thank you for using Appointment Bot Plus.\nAn email has been sent to the above given mail-id.\n.Please enter the One-time Password(OTP) to successfully register."
+    - text: "Thank you for using Appointment Bot Plus.\nAn email has been sent to the above given mail-id.\nPlease enter the One-time Password(OTP) to successfully register."
   
   utter_register_confirmation_response:
     - text: "Thank you for registering with us."
@@ -45,14 +45,16 @@ responses:
     - text: "Bye"
 
   utter_show_menu:
-    - text: Book Appointment
-      payload: /appointment_intent{{"menu_selection":"book"}}
-    - text: Get Appointment Details
-      payload: /appointment_intent{{"menu_selection":"get"}}
-    - text: Update Appointment Details
-      payload: /appointment_intent{{"menu_selection":"update"}}
-    - text: Delete Appointment
-      payload: /appointment_intent{{"menu_selection":"delete"}}
+  - text: "Select an option:"
+    buttons:
+      - title: Book Appointment
+        payload: /appointment_intent{{"menu_selection":"book"}}
+      - title: Get Appointment Details
+        payload: /appointment_intent{{"menu_selection":"get"}}
+      - title: Update Appointment Details
+        payload: /appointment_intent{{"menu_selection":"update"}}
+      - title: Delete Appointment
+        payload: /appointment_intent{{"menu_selection":"delete"}}
 
   utter_which_doctor:
     - text: "Select a doctor from the list of doctors given below for an appointment:"

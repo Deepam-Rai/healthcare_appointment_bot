@@ -72,6 +72,12 @@ slots:
     influence_conversation: false
     mappings:
       - type: custom
+      
+  generated_otp:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
   
   confirm_details:
     type: bool
@@ -98,12 +104,12 @@ forms:
       - gender
       - otp
 
-  book_appointment_form:
-    required_slots:
-      - which_doctor
-      - appointment_date
-      - appointment_time
-      - confirm_details
+#  book_appointment_form:
+#    required_slots:
+#      - which_doctor
+#      - appointment_date
+#      - appointment_time
+#      - confirm_details
 
 actions:
   - action_greet
