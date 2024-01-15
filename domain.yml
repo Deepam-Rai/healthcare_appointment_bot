@@ -4,6 +4,7 @@ entities:
   - name
   - email
   - phone_no
+  - gender
   - confirm_register
   - user_otp
   - book_doctor
@@ -71,6 +72,17 @@ slots:
         - active_loop: register_form
           requested_slot: phone_no
 #        entity: phone_no
+
+  gender:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: gender
+      - type: from_text
+        conditions:
+          - active_loop: register_form
+            requested_slot: gender
 
   confirm_register:
     type: bool
@@ -247,23 +259,45 @@ responses:
   utter_iamabot:
   - text: "I am a bot, powered by Rasa."
 
-  utter_ask_email:
-  - text: "Please provide your email:"
+  # register and login forms responses
+  utter_unregistered_email:
+  - text: "The email provided by you seems to be not registered here."
+
+  utter_request_register:
+  - text: "Please register first!"
 
   utter_ask_name:
-  - text: "What's your name?"
+  - text: "What may I call you?"
+  - text: "Can you please provide your name?"
+  - text: "May I get your name, please?"
+
+
+  utter_ask_email:
+  - text: "Could you let me have your email?"
+  - text: "May I have your email, please?"
+  - text: "Could you share your email, please?"
 
   utter_ask_phone_no:
-  - text: "Please provide your phone no:"
+  - text: "Would you mind providing your phone number?"
+  - text: "Mind sharing your contact number?"
+  - text: "Would you be able to share your contact number?"
+
+  utter_ask_gender:
+  - text: "Could you share your gender, please?"
 
   utter_ask_otp:
-  - text: "Please input the OTP sent to your mail:"
+  - text: "Please input the OTP received in your email."
+  - text: "Enter the OTP sent to your email, please."
+  - text: "Could you input the OTP sent to your mail?"
+  - text: "Input the OTP from your email, please."
+  - text: "Please enter the OTP sent to your mail."
 
   utter_logged_in:
   - text: "You are logged in!"
 
   utter_signed_up:
   - text: "You have successfully signed up!"
+  - text: "Welcome! You're have successfully signed up!"
 
   utter_login_register:
   - text: ""
@@ -289,10 +323,15 @@ responses:
   - text: "Please select a doctor:"
 
   utter_select_date:
-  - text: "Please select a date:"
+  - text: "Select a date, please:"
+  - text: "Please pick a date:"
+  - text: "Select the desired date:"
 
   utter_select_time:
   - text: "Please select time:"
+  - text: "Choose a time from the options:"
+  - text: "Select the time you have in mind:"
+  - text: "Please select your preferred date:"
 
   utter_otp_not_sent:
   - text: "Sorry, we couldn't send the OTP. Please try again later."
