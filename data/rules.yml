@@ -41,3 +41,19 @@ rules:
   - active_loop: null
   - action: action_submit_register_form
   
+- rule: Book appointment form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: book_appointment_intent
+  - action: book_appointment_form
+  - active_loop: book_appointment_form
+  
+- rule: Book Appointment form deactivate
+  condition:
+  - active_loop: book_appointment_form
+  steps:
+  - action: book_appointment_form
+  - active_loop: book_appointment_form
+  - active_loop: null
+#  - action: action_submit_book_appointment_form

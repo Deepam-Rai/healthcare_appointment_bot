@@ -9,6 +9,10 @@ intents:
   - appointment_intent
   - login_form_intent
   - register_form_intent
+  - delete_appointment_intent
+  - book_appointment_intent
+  - get_appointment_intent
+  - update_appointment_intent
 
 entities:
   - email
@@ -90,6 +94,11 @@ slots:
         intent: deny
         value: no
       
+  which_doctor:
+    type: text
+    influence_conversation: false
+    
+  
 forms:
   login_form:
     required_slots:
@@ -104,12 +113,11 @@ forms:
       - gender
       - otp
 
-#  book_appointment_form:
-#    required_slots:
-#      - which_doctor
-#      - appointment_date
-#      - appointment_time
-#      - confirm_details
+  book_appointment_form:
+    required_slots:
+      - which_doctor
+      - appointment_date
+      - appointment_time
 
 actions:
   - action_greet
@@ -118,6 +126,10 @@ actions:
   - action_submit_register_form
   - validate_login_form
   - validate_register_form
+  - action_ask_which_doctor
+  - action_ask_appointment_date
+  - action_ask_appointment_time
+#  - validate_book_appointment_form
 
 session_config:
   session_expiration_time: 60

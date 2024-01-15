@@ -7,7 +7,9 @@ from rasa_sdk.types import DomainDict
 from utils.constants import *
 from utils.utils import *
 from pathlib import Path
+import logging
 from utils.database_utils import *
+logger = logging.getLogger(__name__)
 
 
 class ActionGreet(Action):
@@ -31,14 +33,17 @@ class ActionAskOtp(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         email = tracker.get_slot(EMAIL)
         name = tracker.get_slot(NAME)
-        this_path = Path(os.path.realpath(__file__))
-        gen_otp = generate_otp()
-        print(gen_otp)
-        user_content = get_html_data(f"{this_path.parent.parent}\\utils\\user_mail.html")
-        user_content.format(otp=gen_otp, name=name)
-        print(user_content)
-        send_email("One-time Password(OTP)", email, user_content)
-        dispatcher.utter_message(response='utter_otp_response')
+        is_sent, gen_otp = send_email("One-time Password(OTP)", email)
+        if name is None:
+            name = get_values("user_details",
+                              column_names=['name'],
+                              where_condition={"id": email}
+                              )
+            if name is None:
+                return [SlotSet("otp", -1)]
+            dispatcher.utter_message(response='utter_login_otp_response', name=name[0][0])
+        else:
+            dispatcher.utter_message(response='utter_register_otp_response')
         return [SlotSet("generated_otp", gen_otp)]
 
 
@@ -49,7 +54,17 @@ class ActionSubmitLoginForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(response="utter_register_confirmation_response")
+        email = tracker.get_slot('email')
+        otp = tracker.get_slot('otp')
+        if otp != -1:
+            values = get_values("user_details",
+                                column_names=['name', 'phno', 'gender'] ,
+                                where_condition={"id": email}
+                          )
+            dispatcher.utter_message(response="utter_login_confirmation_response")
+            dispatcher.utter_message(response="utter_show_menu")
+        else:
+            dispatcher.utter_message(response="utter_invalid_user_response")
         return []
 
 
@@ -60,70 +75,18 @@ class ActionSubmitRegisterForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        name = tracker.get_slot('name')
+        email = tracker.get_slot('email')
+        phno = tracker.get_slot('phno')
+        gender = tracker.get_slot('gender')
+        is_inserted, id = insert_row(
+            "user_details",
+            name=name,
+            id=email,
+            phno=phno,
+            gender=gender,
+        )
+        logger.error(is_inserted)
         dispatcher.utter_message(response="utter_register_confirmation_response")
+        dispatcher.utter_message(response="utter_show_menu")
         return []
-
-#
-# class ActionAskWhichDoctor(Action):
-#     def name(self) -> Text:
-#         return "action_ask_which_doctor"
-#
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-#         # fetch doctor list from db
-#         # fetch slots from db
-#         # show doctor and slots to user
-#         values = get_values(table="doctor_details", column_names=['name', 'start_time', 'end_time', 'slots'])
-#         doctors_name = values['name']
-#         # doctors_start_time = values['start_time']
-#         # doctors_end_time = values['end_time']
-#         # doctors_total_slots = values['slots']
-#         # values = get_values(table = "appointment_details", columns = ['start_ts', 'end_ts', 'doctor_name'])
-#         # appointment_start_ts = values['start_ts']
-#         # appointment_end_ts = values['end_ts']
-#         # appointment_docs_name = values['doctor_name']
-#         buttons = [
-#             {
-#                 "title": doc,
-#                 "payload": f'/appointment_intent{{"which_doctor":"{doc}"}}',
-#             } for doc in doctors_name
-#         ]
-#         dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
-#         return []
-#
-#
-# class ActionAskAppointmentDate(Action):
-#     def name(self) -> Text:
-#         return "action_ask_appointment_date"
-#
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-#         dispatcher.utter_message(response="utter_appointment_date")
-#         return []
-#
-#
-# class ActionAskAppointmentTime(Action):
-#     def name(self) -> Text:
-#         return "action_ask_appointment_time"
-#
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-#         values = get_values(table="appointment_details", column_names = ['start_ts', 'end_ts', 'doctor_name'])
-#         appointment_start_ts = values['start_ts']
-#         appointment_end_ts = values['end_ts']
-#         appointment_docs_name = values['doctor_name']
-#         return []
-#
-#
-# class ActionAskConfirmDetails(Action):
-#     def name(self) -> Text:
-#         return "action_ask_confirm_details"
-#
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-#         dispatcher.utter_message(response="utter_confirm_appointment_details")
-#         return []

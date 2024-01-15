@@ -10,5 +10,5 @@ ANALYTICS_CONN_PARAMETERS_LOCAL = {
     "host": "localhost",
     "user": "postgres",
     "password": "root",
-    "database": "postgres",
+    "database": "appointment_app_db",
 }

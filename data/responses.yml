@@ -35,11 +35,17 @@ responses:
         - title: Prefer Not to say
           payload: /user_details_intent{{"gender":"undisclosed"}}
   
-  utter_otp_response:
+  utter_register_otp_response:
     - text: "Thank you for using Appointment Bot Plus.\nAn email has been sent to the above given mail-id.\nPlease enter the One-time Password(OTP) to successfully register."
+  
+  utter_login_otp_response:
+    - text: "Welcome back, {name}.\nPlease enter the One-time Password(OTP) sent to your registered mail id to continue:"
   
   utter_register_confirmation_response:
     - text: "Thank you for registering with us."
+  
+  utter_login_confirmation_response:
+    - text: "Thank you for signing back in."
   
   utter_goodbye:
     - text: "Bye"
@@ -48,13 +54,13 @@ responses:
   - text: "Select an option:"
     buttons:
       - title: Book Appointment
-        payload: /appointment_intent{{"menu_selection":"book"}}
+        payload: /book_appointment_intent
       - title: Get Appointment Details
-        payload: /appointment_intent{{"menu_selection":"get"}}
+        payload: /get_appointment_intent
       - title: Update Appointment Details
-        payload: /appointment_intent{{"menu_selection":"update"}}
+        payload: /update_appointment_intent
       - title: Delete Appointment
-        payload: /appointment_intent{{"menu_selection":"delete"}}
+        payload: /delete_appointment_intent
 
   utter_which_doctor:
     - text: "Select a doctor from the list of doctors given below for an appointment:"
@@ -67,3 +73,9 @@ responses:
     
   utter_confirm_appointment_details:
     - text: "Please confirm your appointment."
+  
+  utter_incorrect_otp_response:
+    - text: "Incorrect OTP. A new OTP has been sent to your Email."
+    
+  utter_invalid_user_response:
+    - text: "No user with this email found. Please recheck the email id.\nOr contact the administrator if any issue."
