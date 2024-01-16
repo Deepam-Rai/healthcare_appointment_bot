@@ -339,6 +339,12 @@ responses:
   utter_wrong_otp:
   - text: "The OTP given by you doesnt match the one sent to your mail."
 
+  utter_registered_email:
+  - text: "The provided mail is already used for another account."
+
+  utter_request_login:
+  - text: "Please login."
+
   # book form responses
   utter_select_book_date:
   - text: "On which date would you like to book the appointment?"
@@ -469,7 +475,9 @@ actions:
   - action_all_options
   - validate_login_form
   - action_submit_login_form
+  - action_ask_phone_no
   - action_submit_register_form
+  - validate_register_form
   - action_ask_user_otp
   - action_ask_book_doctor
   - action_ask_book_date

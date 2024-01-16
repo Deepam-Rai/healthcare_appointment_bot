@@ -14,15 +14,15 @@ from actions.constants import *
 logger = logging.getLogger(__name__)
 
 
-
 ######################################################################################
 # Action Name: action_ask_user_phone_no
 # Description: Aks phone no and checks if given email already registered.
 ######################################################################################
 
+
 class ActionAskPhoneNo(Action):
     def name(self) -> Text:
-        return "action_ask_PhoneNo"
+        return "action_ask_phone_no"
 
     async def run(
             self,
@@ -30,11 +30,12 @@ class ActionAskPhoneNo(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        email = tracker.get_slot(PHONE_NO)
+        email = tracker.get_slot(EMAIL)
         if email == INVALID:
             return [
                 SlotSet(PHONE_NO, None),
-                SlotSet(USER_OTP, None)
+                SlotSet(USER_OTP, None),
+                SlotSet(REQUESTED_SLOT, None)
             ]
         dispatcher.utter_message(response="utter_ask_phone_no")
 
@@ -85,6 +86,7 @@ class ActionSubmitRegisterForm(Action):
             dispatcher.utter_message(response="utter_registered_email")
             dispatcher.utter_message(response="utter_request_login")
             return_values += [
+                SlotSet(NAME, None),
                 SlotSet(EMAIL, None),
                 FollowupAction(ACTION_LOGIN_REGISTER)
             ]
