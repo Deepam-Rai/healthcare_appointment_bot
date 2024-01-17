@@ -12,9 +12,9 @@ from utils.database_utils import *
 logger = logging.getLogger(__name__)
 
 
-class ActionAskWhichDoctor(Action):
+class ActionAskUpdateReason(Action):
     def name(self) -> Text:
-        return "action_ask_which_doctor"
+        return "action_ask_update_reason"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,

@@ -21,6 +21,7 @@ entities:
   - gender
   - otp
   - menu_selection
+  - time
 
 slots:
   email:
@@ -97,8 +98,33 @@ slots:
   which_doctor:
     type: text
     influence_conversation: false
-    
-  
+    mappings:
+      - type: from_entity
+        entity: which_doctor
+        conditions:
+          - requested_slot: which_doctor
+            active_loop: book_appointment_form
+
+  appointment_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: time
+        conditions:
+          - requested_slot: appointment_date
+            active_loop: book_appointment_form
+            
+  appointment_time:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: time
+        conditions:
+          - requested_slot: appointment_time
+            active_loop: book_appointment_form
+   
 forms:
   login_form:
     required_slots:

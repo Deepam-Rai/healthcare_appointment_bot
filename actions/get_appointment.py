@@ -12,9 +12,9 @@ from utils.database_utils import *
 logger = logging.getLogger(__name__)
 
 
-class ActionAskWhichDoctor(Action):
+class ActionAskShowDoctor(Action):
     def name(self) -> Text:
-        return "action_ask_which_doctor"
+        return "action_ask_show_doctor"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
@@ -33,42 +33,29 @@ class ActionAskWhichDoctor(Action):
         return []
 
 
-class ActionAskAppointmentDate(Action):
+class ActionAskSelectMenu(Action):
     def name(self) -> Text:
         return "action_ask_appointment_date"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(response="utter_appointment_date")
+        show_doctor = tracker.get_slot("show_doctor")
+        values = get_values("appointment_details",
+                            column_names=['id', 'start_ts', 'end_ts', 'user_id'],
+                            where_condition={'doctor_name': show_doctor}
+                            )
+        dispatcher.utter_message(text=values)
+        dispatcher.utter_message(response="utter_select_menu")
         return []
 
 
-class ActionAskAppointmentTime(Action):
+class ActionAskAppointmentDetails(Action):
     def name(self) -> Text:
-        return "action_ask_appointment_time"
+        return "action_ask_appointment_details"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        values = get_values("appointment_details",
-                            column_names=['start_ts', 'end_ts', 'doctor_name', 'user_id'],
-                            group_by=['doctor_name']
-                            )
-        which_doctor = tracker.get_slot("which_doctor")
-        logger.error(values)
-        if values is None:
-            doctor_slots = get_values("doctor_details",
-                                      column_names=["slots", "start_time", "end_time"],
-                                      where_condition={'name': which_doctor}
-                                      )
-            logger.debug(doctor_slots)
-        #
-        #
-        # buttons = [
-        #     {
-        #         "title": doc[0],
-        #         "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-        #     } for doc in doctors_name
-        # ]
+        dispatcher.utter_message(text="Enter your appointment details:")
         return []
