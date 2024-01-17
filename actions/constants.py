@@ -48,6 +48,16 @@ GET_DETAILS_FORM_SLOTS = [
     DET_CHOICE
 ]
 
+# delete_appt_form slots
+DEL_DOC = "del_doc"
+DEL_APPT = "del_appt"
+DEL_REASON = "del_reason"
+DELETE_APPT_FORM_SLOTS = [
+    DEL_DOC,
+    DEL_APPT,
+    DEL_REASON
+]
+
 # table names
 USER_DETAILS = "user_details"
 DOCTOR_DETAILS = "doctor_details"

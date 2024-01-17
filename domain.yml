@@ -102,6 +102,10 @@ slots:
             requested_slot: user_otp
           - active_loop: register_form
             requested_slot: user_otp
+          - active_loop: delete_appt_form
+            requested_slot: user_otp
+          - active_loop: update_form
+            requested_slot: user_otp
 
   generated_otp:
     type: text
@@ -182,7 +186,7 @@ slots:
     mappings:
       - type: from_text
         conditions:
-        - active_loop: delete_form
+        - active_loop: delete_appt_form
           requested_slot: del_reason
 
   #update_form slots
@@ -372,6 +376,12 @@ responses:
   utter_booking_done:
   - text: "Your appointment has been booked successfully!"
 
+  utter_booking_failed:
+  - text: "Unexpectedly the booking has failed. We regret inconvenience."
+
+  utter_try_again:
+  - text: "Please try again. Thank you."
+
   # get appointment details responses
   utter_det_doctor:
   - text: "Appointment made for whom would you wish to see?"
@@ -403,7 +413,10 @@ responses:
   - text: "Would you mind sharing reason for cancelling the appointment?"
 
   utter_appt_deleted:
-  - text: "The appointment has been cancelled."
+  - text: "The appointment has been deleted."
+
+  utter_appt_deleted_fail:
+  - text: "Due to technical issues the appointment could not be deleted. Please try again later."
 
   # update_form responses
   utter_appt_updated:
@@ -434,13 +447,6 @@ responses:
         payload: /general_intent{{"update_confirm":"true"}}
       - title: "No"
         payload: /general_intent{{"update_confirm":"false"}}
-
-  #book_form responses
-  utter_booking_failed:
-  - text: "Unexpectedly the booking has failed. We regret inconvenience."
-
-  utter_try_again:
-  - text: "Please try again. Thank you."
 
 
 forms:

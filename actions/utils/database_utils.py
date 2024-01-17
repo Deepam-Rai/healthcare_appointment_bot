@@ -166,3 +166,27 @@ def exists_in_col(
     except (Exception, requests.RequestException) as error:
         logger.error(f'Error: {error}')
         return False
+
+
+def delete_row(
+        table_name,
+        where_condition: dict = None,
+        returning: list = None
+):
+    """Deletes a row from given table with given conditions. If condition is None, deletes all rows.
+    Returns columns "returning" if not mentioned mentioned all columns of the delted row."""
+    query = f"DELETE FROM {table_name} \n"
+    if where_condition:
+        where_pairs = [f"{key} = '{value}'" if value else f"{key} is NULL " for key, value in where_condition.items()]
+        query += f"WHERE {'AND '.join(where_pairs)} \n"
+    query += f"RETURNING {', '.join(returning) if returning  else '*'};\n"
+    response = requests.post(
+        url=f"{db_server_link}custom/",
+        json={
+            "query": query
+        }
+    )
+    logger.debug(query)
+    json_response = response.json()
+    logger.debug(json_response)
+    return True
