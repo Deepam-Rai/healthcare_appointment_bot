@@ -95,3 +95,7 @@ def get_free_slots(doctor, date):
     free_slots = list(zip(free_slots_start, free_slots_end))
     return free_slots
 
+
+def remove_seconds_str(time_str):
+    """Given time string of format "%H:%M:%S" removes seconds and returns"""
+    return ':'.join(str(time_str).split(':')[:-1])

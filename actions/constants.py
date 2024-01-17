@@ -38,17 +38,29 @@ BOOK_FORM_SLOTS = [
     BOOK_CONFIRM
 ]
 
-
-# get_details_form slots
+# get_details form slots
+DET_DOCTOR = "det_doctor"
+DET_APPT = "det_appt"
 DET_CHOICE = "det_choice"
+GET_DETAILS_FORM_SLOTS = [
+    DET_DOCTOR,
+    DET_APPT,
+    DET_CHOICE
+]
 
 # table names
 USER_DETAILS = "user_details"
 DOCTOR_DETAILS = "doctor_details"
 APPOINTMENT = "appointment"
 
+# commonly used column names
+ID = "id"
+
 # doctor_details table columns
 DOCTOR_NAME = "doctor_name"
 START_TIME = "start_time"
 INTERVAL = "interval"
 SLOTS = "slots"
+
+# apoointment table columns
+USER_MAIL = "user_mail"

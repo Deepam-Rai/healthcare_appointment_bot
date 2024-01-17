@@ -2,7 +2,7 @@ import logging
 from typing import Any, Text, Dict, List
 
 from rasa_sdk import Action, Tracker, FormValidationAction
-from rasa_sdk.events import FollowupAction
+from rasa_sdk.events import FollowupAction, SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.types import DomainDict
 from actions.utils.utils import *
@@ -27,11 +27,14 @@ class ActionAskDetDoctor(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        doctors = ["doc1", "doc2", "doc3"]
+        doctors = get_values(
+            DOCTOR_DETAILS,
+            column_names=[NAME],
+        )
         buttons = [
             {
-                "title": doc,
-                "payload": f'/general_intent{{"det_doctor":"{doc}"}}'
+                "title": doc[0],
+                "payload": f'/general_intent{{"det_doctor":"{doc[0]}"}}'
             } for doc in doctors
         ]
         dispatcher.utter_message(response="utter_det_doctor", buttons=buttons)
@@ -53,12 +56,21 @@ class ActionAskDetAppt(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        appts = ["appt-1", "appt-2"]
+        user_mail = tracker.get_slot(EMAIL)
+        doctor = tracker.get_slot(DET_DOCTOR)
+        booked_slots = get_values(
+            APPOINTMENT,
+            column_names=[ID, TIME, DATE],
+            where_condition={
+                DOCTOR_NAME: doctor,
+                USER_MAIL: user_mail
+            }
+        )
         buttons = [
             {
-                "title": appt,
-                "payload": f'/general_intent{{"det_appt":"{appt}"}}'
-            } for appt in appts
+                "title": f'{x[2]} - {remove_seconds_str(x[1])}',
+                "payload": f'/general_intent{{"det_appt":"{x[0]}"}}'
+            } for x in booked_slots
         ]
         dispatcher.utter_message(response="utter_det_appt", buttons=buttons)
         return []
@@ -98,14 +110,21 @@ class ActionSubmitGetDetailsForm(Action):
             tracker: Tracker,
             domain: "DomainDict",
     ) -> List[Dict[Text, Any]]:
+        slot_sets = [SlotSet(x, None) for x in GET_DETAILS_FORM_SLOTS]
         choice = tracker.get_slot(DET_CHOICE)
-        date = "DB- T0D0"
-        time = "DB- T0D0"
-        doctor = "DB- T0D0"
         if choice == UPDATE:
             pass
         elif choice == DELETE:
             pass
         else:
+            details = get_values(
+                APPOINTMENT,
+                column_names=[TIME, DATE],
+                where_condition={
+                    ID: tracker.get_slot(DET_APPT)
+                }
+            )
+            date, time = details[0]
+            doctor = tracker.get_slot(DET_DOCTOR)
             dispatcher.utter_message(response="utter_appt_details", doctor=doctor, date=date, time=time)
-        return []
+        return slot_sets
