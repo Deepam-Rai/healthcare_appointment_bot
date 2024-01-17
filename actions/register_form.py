@@ -96,13 +96,17 @@ class ActionSubmitRegisterForm(Action):
             logger.debug(f'user: {user_otp}    gen: {generated_otp}')
             if user_otp != generated_otp:
                 dispatcher.utter_message(response="utter_wrong_otp")
-                return_values += [FollowupAction(ACTION_LOGIN_REGISTER)]
+                return_values += [
+                    SlotSet(NAME, None),
+                    SlotSet(EMAIL, None),
+                    FollowupAction(ACTION_LOGIN_REGISTER)
+                ]
             else:
                 dispatcher.utter_message(response="utter_logged_in")
                 email = tracker.get_slot(EMAIL)
                 name = tracker.get_slot(NAME)
                 phone_no = tracker.get_slot(PHONE_NO)
-                is_inserted, id = insert_row(
+                is_inserted = insert_row(
                     USER_DETAILS,
                     email=email,
                     name=name,
@@ -112,6 +116,14 @@ class ActionSubmitRegisterForm(Action):
                     f"is inserted: {is_inserted}\n" f"table-name: {USER_DETAILS}"
                 )
                 logger.debug(f"id: {id}")
+                if is_inserted is False:
+                    dispatcher.utter_message(response="utter_registration_failed")
+                    dispatcher.utter_message(response="utter_try_again")
+                    return_values += [
+                        SlotSet(NAME, None),
+                        SlotSet(EMAIL, None),
+                        FollowupAction(ACTION_LOGIN_REGISTER)
+                    ]
         return return_values + [
             SlotSet(USER_OTP, None),
             SlotSet(GENERATED_OTP, None)

@@ -222,6 +222,9 @@ slots:
     mappings:
       - type: from_entity
         entity: time
+        conditions:
+        - active_loop: update_form
+          requested_slot: update_date_new
 
   update_time_new:
     type: text
@@ -345,6 +348,9 @@ responses:
   utter_request_login:
   - text: "Please login."
 
+  utter_registration_failed:
+  - text: "Unexpectedly registration has failed."
+
   # book form responses
   utter_select_book_date:
   - text: "On which date would you like to book the appointment?"
@@ -428,6 +434,13 @@ responses:
         payload: /general_intent{{"update_confirm":"true"}}
       - title: "No"
         payload: /general_intent{{"update_confirm":"false"}}
+
+  #book_form responses
+  utter_booking_failed:
+  - text: "Unexpectedly the booking has failed. We regret inconvenience."
+
+  utter_try_again:
+  - text: "Please try again. Thank you."
 
 
 forms:
