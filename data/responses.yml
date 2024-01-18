@@ -79,3 +79,20 @@ responses:
     
   utter_invalid_user_response:
     - text: "No user with this email found. Please recheck the email id.\nOr contact the administrator if any issue."
+    
+  utter_select_menu:
+    - text: "Select an option for your above selected appointment: "
+      buttons:
+        - title: Add Details
+          payload: /get_appointment_intent{{"select_menu":"add_details"}}
+        - title: Update
+          payload: /update_appointment_intent{{"select_menu":"update"}}
+        - title: Delete
+          payload: /delete_appointment_intent{{"select_menu":"delete"}}
+    
+  utter_delete_reason:
+    - text: "Please enter your reason to delete the appointment:"
+    
+  utter_delete_appointment_otp_response:
+    - text: "Please find the OTP in your registered mail id. Use the OTP to delete this appointment."
+    

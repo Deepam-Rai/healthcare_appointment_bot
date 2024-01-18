@@ -57,3 +57,20 @@ rules:
   - active_loop: book_appointment_form
   - active_loop: null
 #  - action: action_submit_book_appointment_form
+
+- rule: Get appointment form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: get_appointment_intent
+  - action: get_appointment_form
+  - active_loop: get_appointment_form
+  
+- rule: Get Appointment form deactivate
+  condition:
+  - active_loop: get_appointment_form
+  steps:
+  - action: get_appointment_form
+  - active_loop: get_appointment_form
+  - active_loop: null
+  - action: action_submit_book_appointment_form

@@ -12,63 +12,37 @@ from utils.database_utils import *
 logger = logging.getLogger(__name__)
 
 
-class ActionAskWhichDoctor(Action):
+class ActionAskDeleteReason(Action):
     def name(self) -> Text:
-        return "action_ask_which_doctor"
+        return "action_ask_delete_reason"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        values = get_values("doctor_details",
-                            column_names=['name'])
-        logger.debug(values)
-        doctors_name = values
-        buttons = [
-            {
-                "title": doc[0],
-                "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-            } for doc in doctors_name
-        ]
-        dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
+        dispatcher.utter_message(response="utter_delete_reason")
         return []
 
 
-class ActionAskAppointmentDate(Action):
+class ActionAskDeleteOtp(Action):
     def name(self) -> Text:
-        return "action_ask_appointment_date"
+        return "action_ask_otp"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        dispatcher.utter_message(response="utter_appointment_date")
-        return []
+        email = tracker.get_slot(EMAIL)
+        is_sent, gen_otp = send_email("One-time Password(OTP)", email)
+        dispatcher.utter_message(response='utter_delete_appointment_otp_response')
+        return [SlotSet("generated_otp", gen_otp)]
 
 
-class ActionAskAppointmentTime(Action):
+class ActionSubmitDeleteAppointmentForm(Action):
     def name(self) -> Text:
-        return "action_ask_appointment_time"
+        return "action_submit_delete_appointment_form"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        values = get_values("appointment_details",
-                            column_names=['start_ts', 'end_ts', 'doctor_name', 'user_id'],
-                            group_by=['doctor_name']
-                            )
-        which_doctor = tracker.get_slot("which_doctor")
-        logger.error(values)
-        if values is None:
-            doctor_slots = get_values("doctor_details",
-                                      column_names=["slots", "start_time", "end_time"],
-                                      where_condition={'name': which_doctor}
-                                      )
-            logger.debug(doctor_slots)
-        #
-        #
-        # buttons = [
-        #     {
-        #         "title": doc[0],
-        #         "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-        #     } for doc in doctors_name
-        # ]
+        select_appointment = int(tracker.get_slot("select_appointment"))
+        delete_status = delete_row("appointment_details", )
         return []

@@ -7,6 +7,7 @@ import math
 import random
 import logging
 from pathlib import Path
+from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
@@ -24,9 +25,9 @@ def send_email(subject, recipient_email):
     this_path = Path(os.path.realpath(__file__))
     content = get_html_data(f"{this_path.parent.parent}\\utils\\user_mail.html")
     message_data.add_alternative(content.format(otp=otp, image_cid=image_cid), subtype="html")
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
-        smtp_server.login(username, password)
-        smtp_server.send_message(message_data)
+    # with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
+    #     smtp_server.login(username, password)
+    #     smtp_server.send_message(message_data)
     return True, otp
 
 
@@ -48,3 +49,6 @@ def generate_otp():
         otp += digits[math.floor(random.random() * 10)]
     return otp
 
+
+def get_timestamp():
+    return f"{datetime.fromtimestamp(datetime.timestamp(datetime.now())).isoformat()}"

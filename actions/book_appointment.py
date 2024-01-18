@@ -51,19 +51,19 @@ class ActionAskAppointmentTime(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        which_doctor = tracker.get_slot("which_doctor")
+        doctor_slots = get_values("doctor_details",
+                                  column_names=["slots", "start_time", "end_time"],
+                                  where_condition={'name': which_doctor}
+                                  )[0]
+        doc_slots, doc_start_time, doc_end_time = doctor_slots
         values = get_values("appointment_details",
-                            column_names=['start_ts', 'end_ts', 'doctor_name', 'user_id'],
+                            column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
                             group_by=['doctor_name']
                             )
-        which_doctor = tracker.get_slot("which_doctor")
         logger.error(values)
-        if values is None:
-            doctor_slots = get_values("doctor_details",
-                                      column_names=["slots", "start_time", "end_time"],
-                                      where_condition={'name': which_doctor}
-                                      )
-            logger.debug(doctor_slots)
-        #
+        logger.error(doctor_slots)
+        # time_durations = get_time_interval(doc_slots, doc_start_time, doc_end_time)
         #
         # buttons = [
         #     {

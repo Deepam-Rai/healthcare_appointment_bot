@@ -122,3 +122,32 @@ def update_data_using_id(table_name, sender_id, update_fields):
     except (Exception, requests.RequestException) as error:
         logger.error("Error: %s" % error)
         return False
+
+
+def delete_row(
+        table_name,
+        where_condition: dict = None,
+):
+    logger.debug(
+        f"table_name: {table_name}\n"
+        f"update-field: {where_condition}"
+    )
+    try:
+        query = f"DELETE FROM {table_name} \n"
+        if where_condition:
+            where_pairs = [f"{key} = '{value}'" if value else f"{key} is NULL " for key, value in where_condition.items()]
+            query += f"WHERE {'AND '.join(where_pairs)} \n"
+        response = requests.post(
+            url=f"{db_server_link}custom/",
+            json={
+                "query": query
+            }
+        )
+        logger.debug(query)
+        json_response = response.json()
+        logger.debug(json_response)
+        return True
+
+    except (Exception, requests.RequestException) as error:
+        logger.error("Error: %s" % error)
+        return False

@@ -22,6 +22,9 @@ entities:
   - otp
   - menu_selection
   - time
+  - which_doctor
+  - select_menu
+  - select_appointment
 
 slots:
   email:
@@ -109,8 +112,7 @@ slots:
     type: text
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: time
+      - type: from_text
         conditions:
           - requested_slot: appointment_date
             active_loop: book_appointment_form
@@ -120,11 +122,34 @@ slots:
     influence_conversation: false
     mappings:
       - type: from_entity
-        entity: time
+        entity: appointment_time
         conditions:
           - requested_slot: appointment_time
             active_loop: book_appointment_form
    
+  select_menu:
+    type: text
+    influence_conversation: false
+    mappings:
+     - type: from_entity
+       entity: select_menu
+  
+  select_appointment:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: select_appointment
+        
+  appointment_details:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: appointment_details
+            active_loop: get_appointment_form
+
 forms:
   login_form:
     required_slots:
@@ -145,6 +170,11 @@ forms:
       - appointment_date
       - appointment_time
 
+  get_appointment_form:
+    required_slots:
+      - select_appointment
+      - select_menu
+
 actions:
   - action_greet
   - action_ask_otp
@@ -155,6 +185,9 @@ actions:
   - action_ask_which_doctor
   - action_ask_appointment_date
   - action_ask_appointment_time
+  - action_ask_select_menu
+  - action_ask_select_appointment
+  - validate_get_appointment_form
 #  - validate_book_appointment_form
 
 session_config:
