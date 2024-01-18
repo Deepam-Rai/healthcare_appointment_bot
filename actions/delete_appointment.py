@@ -25,7 +25,7 @@ class ActionAskDeleteReason(Action):
 
 class ActionAskDeleteOtp(Action):
     def name(self) -> Text:
-        return "action_ask_otp"
+        return "action_ask_delete_otp"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
@@ -44,5 +44,6 @@ class ActionSubmitDeleteAppointmentForm(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         select_appointment = int(tracker.get_slot("select_appointment"))
-        delete_status = delete_row("appointment_details", )
+        delete_status = delete_row("appointment_details", where_condition={"id": select_appointment})
+        logger.debug(delete_status)
         return []

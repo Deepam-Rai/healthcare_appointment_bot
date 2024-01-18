@@ -8,6 +8,7 @@ import random
 import logging
 from pathlib import Path
 from datetime import datetime
+from dateutil.rrule import rrule, MINUTELY, HOURLY
 logger = logging.getLogger(__name__)
 
 
@@ -52,3 +53,17 @@ def generate_otp():
 
 def get_timestamp():
     return f"{datetime.fromtimestamp(datetime.timestamp(datetime.now())).isoformat()}"
+
+
+def get_timeslots(slots, start_time, end_time):
+    start_datetime = datetime.strptime(start_time, "%H:%M")
+    end_datetime = datetime.strptime(end_time, "%H:%M")
+    duration = (end_datetime - start_datetime) / slots
+    time_slots = list(rrule(HOURLY, dtstart=start_datetime, until=end_datetime, interval=duration))
+    result = [[slot.strftime("%H:%M"), (slot + duration).strftime("%H:%M")] for slot in time_slots]
+    return result
+
+
+def get_time_interval(doc_free_slots, booked_appointment_slots):
+    doc_slots, doc_start_time, doc_end_time = doc_free_slots
+    all_doc_slots = get_timeslots(doc_slots, doc_start_time, doc_end_time)

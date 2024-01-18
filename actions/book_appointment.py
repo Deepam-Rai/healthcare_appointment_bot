@@ -52,18 +52,18 @@ class ActionAskAppointmentTime(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         which_doctor = tracker.get_slot("which_doctor")
-        doctor_slots = get_values("doctor_details",
+        appointment_date = tracker.get_slot("appointment_date")
+        doctor_free_slots = get_values("doctor_details",
                                   column_names=["slots", "start_time", "end_time"],
                                   where_condition={'name': which_doctor}
                                   )[0]
-        doc_slots, doc_start_time, doc_end_time = doctor_slots
-        values = get_values("appointment_details",
-                            column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
-                            group_by=['doctor_name']
+        booked_appointment_slots = get_values("appointment_details",
+                                              column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
+                                              where_condition={"date": appointment_date},
+                                              group_by=['doctor_name']
                             )
-        logger.error(values)
-        logger.error(doctor_slots)
-        # time_durations = get_time_interval(doc_slots, doc_start_time, doc_end_time)
+
+        time_durations = get_time_interval(doctor_free_slots, booked_appointment_slots)
         #
         # buttons = [
         #     {
@@ -72,3 +72,4 @@ class ActionAskAppointmentTime(Action):
         #     } for doc in doctors_name
         # ]
         return []
++
