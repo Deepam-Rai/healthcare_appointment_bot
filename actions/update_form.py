@@ -2,9 +2,11 @@ import logging
 from typing import Any, Text, Dict, List
 
 from rasa_sdk import Action, Tracker, FormValidationAction
-from rasa_sdk.events import FollowupAction
+from rasa_sdk.events import FollowupAction, SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.types import DomainDict
+
+from actions.utils.database_utils import delete_row, update_row
 from actions.utils.utils import *
 from actions.constants import *
 
@@ -27,11 +29,14 @@ class ActionAskUpdateDoc(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        doctors = ["doc1", "doc2", "doc3"]
+        doctors = get_values(
+            DOCTOR_DETAILS,
+            column_names=[NAME],
+        )
         buttons = [
             {
-                "title": doc,
-                "payload": f'/general_intent{{"update_doc":"{doc}"}}'
+                "title": doc[0],
+                "payload": f'/general_intent{{"{UPDATE_DOC}":"{doc[0]}"}}'
             } for doc in doctors
         ]
         dispatcher.utter_message(response="utter_update_doc", buttons=buttons)
@@ -53,12 +58,21 @@ class ActionAskUpdateAppt(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        appts = ["appt-1", "appt-2"]
+        user_mail = tracker.get_slot(EMAIL)
+        doctor = tracker.get_slot(UPDATE_DOC)
+        booked_slots = get_values(
+            APPOINTMENT,
+            column_names=[ID, TIME, DATE],
+            where_condition={
+                DOCTOR_NAME: doctor,
+                USER_MAIL: user_mail
+            }
+        )
         buttons = [
             {
-                "title": appt,
-                "payload": f'/general_intent{{"update_appt":"{appt}"}}'
-            } for appt in appts
+                "title": f'{x[2]} - {remove_seconds_str(x[1])}',
+                "payload": f'/general_intent{{"{UPDATE_APPT}":"{x[0]}"}}'
+            } for x in booked_slots
         ]
         dispatcher.utter_message(response="utter_update_appt", buttons=buttons)
         return []
@@ -79,11 +93,14 @@ class ActionAskUpdateDocNew(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        doctors = ["doc1", "doc2", "doc3"]
+        doctors = get_values(
+            DOCTOR_DETAILS,
+            column_names=[NAME],
+        )
         buttons = [
             {
-                "title": doc,
-                "payload": f'/general_intent{{"update_doc_new":"{doc}"}}'
+                "title": doc[0],
+                "payload": f'/general_intent{{"{UPDATE_DOC_NEW}":"{doc[0]}"}}'
             } for doc in doctors
         ]
         dispatcher.utter_message(response="utter_update_doc_new", buttons=buttons)
@@ -126,12 +143,19 @@ class ActionAskUpdateTimeNew(Action):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        slots = ["slot1", "slot2", "slot3"]
+        doctor = tracker.get_slot(UPDATE_DOC_NEW)
+        date = tracker.get_slot(UPDATE_DATE_NEW)
+        free_slots_time = get_free_slots(doctor=doctor, date=date)
+        logger.debug(free_slots_time)
+        free_slots = [(a.strftime("%H:%M:%S"), b.strftime("%H:%M:%S")) for a, b in free_slots_time]
+        free_slots = [(':'.join(str(a).split(':')[:-1]), ':'.join(str(b).split(':')[:-1])) for a, b in free_slots]
+        btn_titles = [f'{a} - {b}' for a, b in free_slots]
+        logger.debug(btn_titles)
         buttons = [
             {
-                "title": slot,
-                "payload": f'/general_intent{{"update_time_new":"{slot}"}}'
-            } for slot in slots
+                "title": btn_titles[i],
+                "payload": f'/general_intent{{"{UPDATE_TIME_NEW}":"{free_slots_time[i][0]}"}}'
+            } for i in range(0, len(free_slots))
         ]
         dispatcher.utter_message(response="utter_select_update_time", buttons=buttons)
         return []
@@ -153,10 +177,34 @@ class ActionSubmitUpdateForm(Action):
             tracker: Tracker,
             domain: "DomainDict",
     ) -> List[Dict[Text, Any]]:
+        return_values = []
+        slot_sets = [SlotSet(x, None) for x in UPDATE_FORM_SLOTS]
+        otp_resets = [
+            SlotSet(GENERATED_OTP, None),
+            SlotSet(USER_OTP, None)
+        ]
         user_otp = str(tracker.get_slot(USER_OTP))
         generated_otp = str(tracker.get_slot(GENERATED_OTP))
         if user_otp != generated_otp:
             dispatcher.utter_message(response="utter_wrong_otp")
+            return_values += slot_sets
         else:
-            dispatcher.utter_message(response="utter_appt_updated")
-        return []
+            updated = update_row(
+                APPOINTMENT,
+                conditions={
+                    ID: tracker.get_slot(UPDATE_APPT)
+                },
+                update_fields={
+                    DOCTOR_NAME: tracker.get_slot(UPDATE_DOC_NEW),
+                    DATE: tracker.get_slot(UPDATE_DATE_NEW),
+                    TIME: tracker.get_slot(UPDATE_TIME_NEW)
+                },
+            )
+            logger.debug(f"is data updated: {updated}")
+            if updated is True:
+                dispatcher.utter_message(response="utter_appt_updated")
+            else:
+                dispatcher.utter_message(response="utter_update_fail")
+                dispatcher.utter_message(response="utter_try_again_later")
+            return_values += slot_sets
+        return return_values + otp_resets

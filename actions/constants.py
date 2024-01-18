@@ -58,6 +58,24 @@ DELETE_APPT_FORM_SLOTS = [
     DEL_REASON
 ]
 
+# update_form slots
+UPDATE_DOC = "update_doc"
+UPDATE_APPT = "update_appt"
+UPDATE_REASON = "update_reason"
+UPDATE_DOC_NEW = "update_doc_new"
+UPDATE_DATE_NEW = "update_date_new"
+UPDATE_TIME_NEW = "update_time_new"
+UPDATE_CONFIRM = "update_confirm"
+UPDATE_FORM_SLOTS = [
+    UPDATE_DOC,
+    UPDATE_APPT,
+    UPDATE_REASON,
+    UPDATE_DOC_NEW,
+    UPDATE_DATE_NEW,
+    UPDATE_TIME_NEW,
+    UPDATE_CONFIRM
+]
+
 # table names
 USER_DETAILS = "user_details"
 DOCTOR_DETAILS = "doctor_details"

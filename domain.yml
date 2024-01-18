@@ -266,6 +266,10 @@ responses:
   utter_iamabot:
   - text: "I am a bot, powered by Rasa."
 
+  # common responses
+  utter_try_again_later:
+  - text: "Please try again later."
+
   # register and login forms responses
   utter_unregistered_email:
   - text: "The email provided by you seems to be not registered here."
@@ -413,7 +417,7 @@ responses:
   - text: "Would you mind sharing reason for cancelling the appointment?"
 
   utter_appt_deleted:
-  - text: "The appointment has been deleted."
+  - text: "The appointment has been cancelled."
 
   utter_appt_deleted_fail:
   - text: "Due to technical issues the appointment could not be deleted. Please try again later."
@@ -448,6 +452,8 @@ responses:
       - title: "No"
         payload: /general_intent{{"update_confirm":"false"}}
 
+  utter_update_fail:
+  - text: "Unexpectedly failed to update the appointment."
 
 forms:
   login_form:
