@@ -21,6 +21,10 @@ USER_OTP = "user_otp"
 DELETE = "delete"
 REQUESTED_SLOT = "requested_slot"
 
+# forms
+DELETE_APPT_FORM = "delete_appt_form"
+UPDATE_FORM = "update_form"
+
 # register form slots
 EMAIL = "email"
 NAME = "name"

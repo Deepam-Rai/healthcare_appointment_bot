@@ -110,12 +110,23 @@ class ActionSubmitGetDetailsForm(Action):
             tracker: Tracker,
             domain: "DomainDict",
     ) -> List[Dict[Text, Any]]:
+        return_values = []
         slot_sets = [SlotSet(x, None) for x in GET_DETAILS_FORM_SLOTS]
+        doctor = tracker.get_slot(DET_DOCTOR)
+        det_appt = tracker.get_slot(DET_APPT)
         choice = tracker.get_slot(DET_CHOICE)
         if choice == UPDATE:
-            pass
+            return_values += [
+                SlotSet(UPDATE_DOC, doctor),
+                SlotSet(UPDATE_APPT, det_appt),
+                FollowupAction(UPDATE_FORM)
+            ]
         elif choice == DELETE:
-            pass
+            return_values += [
+                SlotSet(DEL_DOC, doctor),
+                SlotSet(DEL_APPT, det_appt),
+                FollowupAction(DELETE_APPT_FORM)
+            ]
         else:
             details = get_values(
                 APPOINTMENT,
@@ -127,4 +138,4 @@ class ActionSubmitGetDetailsForm(Action):
             date, time = details[0]
             doctor = tracker.get_slot(DET_DOCTOR)
             dispatcher.utter_message(response="utter_appt_details", doctor=doctor, date=date, time=time)
-        return slot_sets
+        return return_values + slot_sets
