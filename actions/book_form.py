@@ -32,12 +32,12 @@ class ActionAskBookDoctor(Action):
     ) -> List[Dict[Text, Any]]:
         doctors = get_values(
             DOCTOR_DETAILS,
-            column_names=[NAME],
+            column_names=[NAME, ID],
         )
         buttons = [
             {
                 "title": doc[0],
-                "payload": f'/general_intent{{"book_doctor":"{doc[0]}"}}'
+                "payload": f'/general_intent{{"book_doctor":"{doc[1]}", "book_doctor_name":"{doc[0]}"}}'
             } for doc in doctors
         ]
         dispatcher.utter_message(response="utter_select_doc", buttons=buttons)
@@ -119,7 +119,8 @@ class ActionSubmitBookForm(Action):
         else:
             is_inserted, id = insert_row(
                 APPOINTMENT,
-                doctor_name=tracker.get_slot(BOOK_DOCTOR),
+                doctor_id=tracker.get_slot(BOOK_DOCTOR),
+                doctor_name=tracker.get_slot(BOOK_DOCTOR_NAME),
                 date=tracker.get_slot(BOOK_DATE),
                 time=tracker.get_slot(BOOK_TIME),
                 user_mail=tracker.get_slot(EMAIL)

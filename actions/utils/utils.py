@@ -29,7 +29,6 @@ def send_otp(otp, user_mail):
         message_data["Subject"] = OTP_SUBJECT
         username = os.environ["EMAIL"]
         password = os.environ["PASS"]
-        logger.debug(f'email: {username}    pass: {password}')
         message_data["From"] = username
         message_data["To"] = user_mail
         image_cid = make_msgid(domain="life.com")
@@ -69,7 +68,7 @@ def get_free_slots(doctor, date):
         DOCTOR_DETAILS,
         column_names=[START_TIME, INTERVAL, SLOTS],
         where_condition={
-            NAME: doctor
+            ID: doctor
         }
     )[0]
     start_time = datetime.strptime(start_time, '%H:%M:%S')
@@ -79,7 +78,7 @@ def get_free_slots(doctor, date):
         APPOINTMENT,
         column_names=[f'{APPOINTMENT}.{TIME}'],
         where_condition={
-            DOCTOR_NAME: doctor,
+            DOCTOR_ID: doctor,
             DATE: date
         }
     )

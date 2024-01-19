@@ -8,18 +8,23 @@ entities:
   - confirm_register
   - user_otp
   - book_doctor
+  - book_doctor_name
   - time
   - book_time
   - book_confirm
   - det_doctor
+  - det_doctor_name
   - det_appt
   - det_choice
   - del_doc
+  - del_doc_name
   - del_appt
   - del_otp
   - update_doc
+  - update_doc_name
   - update_appt
   - update_doc_new
+  - update_doc_new_name
   - update_time_new
   - update_confirm
 
@@ -121,6 +126,13 @@ slots:
       - type: from_entity
         entity: book_doctor
 
+  book_doctor_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: book_doctor_name
+
   book_date:
     type: text
     influence_conversation: false
@@ -152,6 +164,12 @@ slots:
     mappings:
       - type: from_entity
         entity: det_doctor
+  det_doctor_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: det_doctor_name
   det_appt:
     type: text
     influence_conversation: false
@@ -172,6 +190,13 @@ slots:
     mappings:
       - type: from_entity
         entity: del_doc
+
+  del_doc_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: del_doc_name
 
   del_appt:
     type: text
@@ -197,6 +222,13 @@ slots:
       - type: from_entity
         entity: update_doc
 
+  update_doc_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_doc_name
+
   update_appt:
     type: text
     influence_conversation: false
@@ -219,6 +251,13 @@ slots:
     mappings:
       - type: from_entity
         entity: update_doc_new
+
+  update_doc_new_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: update_doc_new_name
 
   update_date_new:
     type: text
@@ -367,7 +406,7 @@ responses:
   - text: "Following are the available slots for doctor {book_doctor}, please select one:"
 
   utter_ask_book_confirm:
-  - text: "So confirm appointment for doctor {book_doctor} on date {book_date} at time {book_time}?"
+  - text: "So confirm appointment for doctor {book_doctor_name} on date {book_date} at time {book_time}?"
     buttons:
       - title: "Yes"
         payload: /general_intent{{"book_confirm":"true"}}
@@ -392,6 +431,9 @@ responses:
 
   utter_det_appt:
   - text: "Please select appointment to see its details."
+
+  utter_no_appt:
+  - text: "You dont have any appointment with doctor {doctor}."
 
   utter_ask_det_choice:
   - text: "What would you like to do?"
@@ -476,23 +518,23 @@ forms:
     required_slots:
       - det_doctor
       - det_appt
-      - det_choice
+#      - det_choice
   delete_appt_form:
     required_slots:
       - del_doc
       - del_appt
-      - del_reason
-      - user_otp
+#      - del_reason
+#      - user_otp
   update_form:
     required_slots:
       - update_doc
       - update_appt
-      - update_reason
-      - update_doc_new
-      - update_date_new
-      - update_time_new
-      - update_confirm
-      - user_otp
+#      - update_reason
+#      - update_doc_new
+#      - update_date_new
+#      - update_time_new
+#      - update_confirm
+#      - user_otp
 
 
 actions:
@@ -511,17 +553,19 @@ actions:
   - action_ask_det_doctor
   - action_ask_det_appt
   - action_submit_get_details_form
+  - validate_get_details_form
   - action_ask_del_doc
   - action_ask_del_appt
   - action_ask_del_otp
   - action_submit_delete_appt_form
+  - validate_delete_appt_form
   - action_ask_update_doc
   - action_ask_update_appt
   - action_ask_update_doc_new
   - action_ask_update_date_new
   - action_ask_update_time_new
   - action_submit_update_form
-
+  - validate_update_form
 
 
 session_config:

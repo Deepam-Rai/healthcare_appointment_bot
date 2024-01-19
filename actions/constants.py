@@ -21,7 +21,11 @@ USER_OTP = "user_otp"
 DELETE = "delete"
 REQUESTED_SLOT = "requested_slot"
 
+# values
+INVALID_APPT = "-1"
+
 # forms
+GET_DETAILS_FORM = "get_details_form"
 DELETE_APPT_FORM = "delete_appt_form"
 UPDATE_FORM = "update_form"
 
@@ -32,6 +36,7 @@ PHONE_NO = "phone_no"
 
 # book_form slots
 BOOK_DOCTOR = "book_doctor"
+BOOK_DOCTOR_NAME = "book_doctor_name"
 BOOK_DATE = "book_date"
 BOOK_TIME = "book_time"
 BOOK_CONFIRM = "book_confirm"
@@ -44,6 +49,7 @@ BOOK_FORM_SLOTS = [
 
 # get_details form slots
 DET_DOCTOR = "det_doctor"
+DET_DOCTOR_NAME = "det_doctor_name"
 DET_APPT = "det_appt"
 DET_CHOICE = "det_choice"
 GET_DETAILS_FORM_SLOTS = [
@@ -54,6 +60,7 @@ GET_DETAILS_FORM_SLOTS = [
 
 # delete_appt_form slots
 DEL_DOC = "del_doc"
+DEL_DOC_NAME = "del_doc_name"
 DEL_APPT = "del_appt"
 DEL_REASON = "del_reason"
 DELETE_APPT_FORM_SLOTS = [
@@ -64,9 +71,11 @@ DELETE_APPT_FORM_SLOTS = [
 
 # update_form slots
 UPDATE_DOC = "update_doc"
+UPDATE_DOC_NAME = "update_doc_name"
 UPDATE_APPT = "update_appt"
 UPDATE_REASON = "update_reason"
 UPDATE_DOC_NEW = "update_doc_new"
+UPDATE_DOC_NEW_NAME = "update_doc_new_name"
 UPDATE_DATE_NEW = "update_date_new"
 UPDATE_TIME_NEW = "update_time_new"
 UPDATE_CONFIRM = "update_confirm"
@@ -89,6 +98,7 @@ APPOINTMENT = "appointment"
 ID = "id"
 
 # doctor_details table columns
+DOCTOR_ID = "doctor_id"
 DOCTOR_NAME = "doctor_name"
 START_TIME = "start_time"
 INTERVAL = "interval"

@@ -154,9 +154,7 @@ def exists_in_col(
                 "query": query
             }
         )
-        logger.debug(query)
         json_response = response.json()
-        logger.debug(json_response)
         if json_response[0][0] is True:
             logger.debug(f'{value} exists in column {column_name} of table {table_name}.')
             return True
