@@ -54,22 +54,20 @@ class ActionAskAppointmentTime(Action):
         which_doctor = tracker.get_slot("which_doctor")
         appointment_date = tracker.get_slot("appointment_date")
         doctor_free_slots = get_values("doctor_details",
-                                  column_names=["slots", "start_time", "end_time"],
-                                  where_condition={'name': which_doctor}
-                                  )[0]
+                                       column_names=["slots", "start_time", "end_time"],
+                                       where_condition={'name': which_doctor}
+                                       )[0]
         booked_appointment_slots = get_values("appointment_details",
                                               column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
-                                              where_condition={"date": appointment_date},
+                                              where_condition={"date": appointment_date, "doctor_name": which_doctor},
                                               group_by=['doctor_name']
                             )
-
-        time_durations = get_time_interval(doctor_free_slots, booked_appointment_slots)
-        #
-        # buttons = [
-        #     {
-        #         "title": doc[0],
-        #         "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-        #     } for doc in doctors_name
-        # ]
+        free_slots = get_time_interval(doctor_free_slots, booked_appointment_slots)
+        buttons = [
+            {
+                "title": f"{slot[0]}-{slot[1]}",
+                "payload": f'/appointment_intent{{"appointment_time":f"{slot[0]}-{slot[1]}"}}',
+            } for slot in free_slots
+        ]
+        dispatcher.utter_message(response="utter_appointment_time", buttons=buttons)
         return []
-+

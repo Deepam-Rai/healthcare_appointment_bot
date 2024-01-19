@@ -73,4 +73,21 @@ rules:
   - action: get_appointment_form
   - active_loop: get_appointment_form
   - active_loop: null
-  - action: action_submit_book_appointment_form
+  - action: action_submit_get_appointment_form
+
+- rule: Delete appointment form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: delete_appointment_intent
+  - action: delete_appointment_form
+  - active_loop: delete_appointment_form
+  
+- rule: Delete Appointment form deactivate
+  condition:
+  - active_loop: delete_appointment_form
+  steps:
+  - action: delete_appointment_form
+  - active_loop: delete_appointment_form
+  - active_loop: null
+  - action: action_submit_delete_appointment_form

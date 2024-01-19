@@ -25,6 +25,8 @@ entities:
   - which_doctor
   - select_menu
   - select_appointment
+  - appointment_time
+  -
 
 slots:
   email:
@@ -150,6 +152,24 @@ slots:
           - requested_slot: appointment_details
             active_loop: get_appointment_form
 
+  delete_reason:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: delete_reason
+            active_loop: delete_appointment_form
+
+  delete_otp:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: delete_otp
+            active_loop: delete_appointment_form
+
 forms:
   login_form:
     required_slots:
@@ -175,6 +195,12 @@ forms:
       - select_appointment
       - select_menu
 
+  delete_appointment_form:
+    required_slots:
+      - select_appointment
+      - delete_reason
+      - delete_otp
+
 actions:
   - action_greet
   - action_ask_otp
@@ -188,6 +214,12 @@ actions:
   - action_ask_select_menu
   - action_ask_select_appointment
   - validate_get_appointment_form
+  - validate_book_appointment_form
+  - action_ask_delete_reason
+  - action_ask_delete_otp
+  - action_submit_delete_appointment_form
+  - validate_delete_appointment_form
+  - action_submit_get_appointment_form
 #  - validate_book_appointment_form
 
 session_config:

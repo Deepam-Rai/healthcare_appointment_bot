@@ -55,15 +55,26 @@ def get_timestamp():
     return f"{datetime.fromtimestamp(datetime.timestamp(datetime.now())).isoformat()}"
 
 
-def get_timeslots(slots, start_time, end_time):
-    start_datetime = datetime.strptime(start_time, "%H:%M")
-    end_datetime = datetime.strptime(end_time, "%H:%M")
-    duration = (end_datetime - start_datetime) / slots
-    time_slots = list(rrule(HOURLY, dtstart=start_datetime, until=end_datetime, interval=duration))
-    result = [[slot.strftime("%H:%M"), (slot + duration).strftime("%H:%M")] for slot in time_slots]
+def get_timeslots(start_time=None, end_time=None, slots=None, booked_slots=None):
+    result = None
+    if slots and booked_slots is None:
+        start_datetime = datetime.strptime(start_time, "%H:%M:%S")
+        end_datetime = datetime.strptime(end_time, "%H:%M:%S")
+        duration = (end_datetime - start_datetime) / slots
+        duration = int(duration.total_seconds()/3600)
+        time_slots = list(rrule(HOURLY, dtstart=start_datetime, until=end_datetime, interval=duration))
+        all_slots = [str(x.time()) for x in time_slots]
+        result = [list(pair) for pair in zip(all_slots, all_slots[1:])]
+    if booked_slots:
+        result = [[sublist[0], sublist[1]] for sublist in booked_slots]
     return result
 
 
 def get_time_interval(doc_free_slots, booked_appointment_slots):
     doc_slots, doc_start_time, doc_end_time = doc_free_slots
-    all_doc_slots = get_timeslots(doc_slots, doc_start_time, doc_end_time)
+    all_doc_slots = get_timeslots(start_time=doc_start_time, end_time=doc_end_time, slots=doc_slots, booked_slots=None)
+    occupied_slots = get_timeslots(booked_slots=booked_appointment_slots)
+    set1 = {tuple(sublist) for sublist in all_doc_slots}
+    set2 = {tuple(sublist) for sublist in occupied_slots}
+    free_slots = [list(sub) for sub in (set1 - set2)]
+    return free_slots
