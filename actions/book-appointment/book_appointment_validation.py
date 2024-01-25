@@ -20,10 +20,10 @@ class ValidateBookAppointmentForm(FormValidationAction):
             dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: DomainDict) -> List[Text]:
-        is_doc_full = tracker.get_slot("is_doc_full")
+        is_doc_full = tracker.get_slot(IS_DOC_FULL)
         slots = domain_slots.copy()
         if is_doc_full == True:
-            return ["which_doctor", "appointment_date", "appointment_time"] + slots
+            return [WHICH_DOCTOR, APPOINTMENT_DATE, APPOINTMENT_TIME] + slots
         return slots
 
     async def validate_appointment_date(self, value: Text,
@@ -32,4 +32,4 @@ class ValidateBookAppointmentForm(FormValidationAction):
                                         domain: "DomainDict") -> Dict[str, str]:
         parsed_date = datetime.strptime(value, "%d/%m/%Y")
         formatted_date = parsed_date.strftime("%Y-%m-%d")
-        return {"appointment_date": formatted_date}
+        return {APPOINTMENT_DATE: formatted_date}

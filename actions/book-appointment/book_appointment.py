@@ -1,14 +1,11 @@
-from typing import Any, Dict, List, Text
+from typing import Any, Text
 from rasa_sdk import Action, Tracker
 from rasa_sdk.events import FollowupAction, SlotSet
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.forms import FormValidationAction
-from rasa_sdk.types import DomainDict
-from utils.constants import *
 from utils.utils import *
-from pathlib import Path
 import logging
 from utils.database_utils import *
+
 logger = logging.getLogger(__name__)
 
 
@@ -19,10 +16,10 @@ class ActionAskWhichDoctor(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        values = get_values("doctor_details",
-                            column_names=['name'])
+        values = get_values(DOCTOR_DETAILS,
+                            column_names=[NAME])
         logger.debug(values)
-        fully_booked_docs = tracker.get_slot("fully_booked_docs")
+        fully_booked_docs = tracker.get_slot(FULLY_BOOKED_DOCS)
         doctors_name = values
         if fully_booked_docs:
             buttons = [
@@ -39,7 +36,7 @@ class ActionAskWhichDoctor(Action):
                 } for doc in doctors_name if doc[0]
             ]
         dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
-        return [SlotSet("is_doc_full", False)]
+        return [SlotSet(IS_DOC_FULL, False)]
 
 
 class ActionAskAppointmentDate(Action):
@@ -60,17 +57,17 @@ class ActionAskAppointmentTime(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        which_doctor = tracker.get_slot("which_doctor")
-        fully_booked_docs = tracker.get_slot("fully_booked_docs")
-        appointment_date = tracker.get_slot("appointment_date")
-        doctor_free_slots = get_values("doctor_details",
-                                       column_names=["slots", "start_time", "end_time"],
-                                       where_condition={'name': which_doctor}
+        which_doctor = tracker.get_slot(WHICH_DOCTOR)
+        fully_booked_docs = tracker.get_slot(FULLY_BOOKED_DOCS)
+        appointment_date = tracker.get_slot(APPOINTMENT_DATE)
+        doctor_free_slots = get_values(DOCTOR_DETAILS,
+                                       column_names=[SLOTS, START_TIME, END_TIME],
+                                       where_condition={NAME: which_doctor}
                                        )[0]
-        booked_appointment_slots = get_values("appointment_details",
-                                              column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
-                                              where_condition={"date": appointment_date, "doctor_name": which_doctor},
-                                              group_by=['doctor_name']
+        booked_appointment_slots = get_values(APPOINTMENT_DETAILS,
+                                              column_names=[START_TIME, END_TIME, DOCTOR_NAME, USER_ID, DATE],
+                                              where_condition={DATE: appointment_date, DOCTOR_NAME: which_doctor},
+                                              group_by=[DOCTOR_NAME]
                             )
 
         free_slots = get_time_interval(doctor_free_slots, booked_appointment_slots)
@@ -78,11 +75,11 @@ class ActionAskAppointmentTime(Action):
         if free_slots == None:
             dispatcher.utter_message(response="utter_doctor_occupied_response")
             fully_booked_docs = fully_booked_docs.append(which_doctor) if fully_booked_docs else [which_doctor]
-            return [SlotSet("is_doctor_full", True),
-                    SlotSet("fully_booked_docs", fully_booked_docs),
-                    SlotSet("which_doctor", None),
-                    SlotSet("appointment_date", None),
-                    SlotSet("appointment_time", None),
+            return [SlotSet(IS_DOCTOR_FULL, True),
+                    SlotSet(FULLY_BOOKED_DOCS, fully_booked_docs),
+                    SlotSet(WHICH_DOCTOR, None),
+                    SlotSet(APPOINTMENT_DATE, None),
+                    SlotSet(APPOINTMENT_TIME, None),
                     ]
 
         buttons = [
@@ -102,12 +99,12 @@ class ActionSubmitBookAppointmentForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        start_time, end_time = tracker.get_slot("appointment_time").split('-')
-        doctor_name = tracker.get_slot("which_doctor")
-        user_id = tracker.get_slot("email")
-        date = tracker.get_slot("appointment_date")
+        start_time, end_time = tracker.get_slot(APPOINTMENT_TIME).split('-')
+        doctor_name = tracker.get_slot(WHICH_DOCTOR)
+        user_id = tracker.get_slot(EMAIL)
+        date = tracker.get_slot(APPOINTMENT_DATE)
         is_inserted, id = insert_row(
-            "appointment_details",
+            APPOINTMENT_DETAILS,
             start_time=start_time,
             end_time=end_time,
             doctor_name=doctor_name,

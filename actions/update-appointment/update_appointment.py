@@ -30,10 +30,10 @@ class ActionAskNewWhichDoctor(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        values = get_values("doctor_details",
-                            column_names=['name'])
+        values = get_values(DOCTOR_DETAILS,
+                            column_names=[NAME])
         logger.debug(values)
-        fully_booked_docs = tracker.get_slot("fully_booked_docs")
+        fully_booked_docs = tracker.get_slot(FULLY_BOOKED_DOCS)
         doctors_name = values
         if fully_booked_docs:
             buttons = [
@@ -50,7 +50,7 @@ class ActionAskNewWhichDoctor(Action):
                 } for doc in doctors_name if doc[0]
             ]
         dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
-        return [SlotSet("is_doc_full", False)]
+        return [SlotSet(IS_DOC_FULL, False)]
 
 
 class ActionAskNewAppointmentDate(Action):
@@ -71,19 +71,19 @@ class ActionAskNewAppointmentTime(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        which_doctor = tracker.get_slot("new_which_doctor")
-        fully_booked_docs = tracker.get_slot("fully_booked_docs")
-        appointment_date = tracker.get_slot("new_appointment_date")
-        doctor_free_slots = get_values("doctor_details",
-                                       column_names=["slots", "start_time", "end_time"],
-                                       where_condition={'name': which_doctor}
+        which_doctor = tracker.get_slot(NEW_WHICH_DOCTOR)
+        fully_booked_docs = tracker.get_slot(FULLY_BOOKED_DOCS)
+        appointment_date = tracker.get_slot(NEW_APPOINTMENT_DATE)
+        doctor_free_slots = get_values(DOCTOR_DETAILS,
+                                       column_names=[SLOTS, START_TIME, END_TIME],
+                                       where_condition={NAME: which_doctor}
                                        )[0]
         logger.error(appointment_date)
         logger.error(which_doctor)
-        booked_appointment_slots = get_values("appointment_details",
-                                              column_names=['start_time', 'end_time', 'doctor_name', 'user_id', 'date'],
-                                              where_condition={"date": appointment_date, "doctor_name": which_doctor},
-                                              group_by=['doctor_name']
+        booked_appointment_slots = get_values(APPOINTMENT_DETAILS,
+                                              column_names=[START_TIME, END_TIME, DOCTOR_NAME, USER_ID, DATE],
+                                              where_condition={DATE: appointment_date, DOCTOR_NAME: which_doctor},
+                                              group_by=[DOCTOR_NAME]
                                               )
 
         free_slots = get_time_interval(doctor_free_slots, booked_appointment_slots)
@@ -91,11 +91,11 @@ class ActionAskNewAppointmentTime(Action):
         if free_slots == None:
             dispatcher.utter_message(response="utter_doctor_occupied_response")
             fully_booked_docs = fully_booked_docs.append(which_doctor) if fully_booked_docs else [which_doctor]
-            return [SlotSet("is_doctor_full", True),
-                    SlotSet("fully_booked_docs", fully_booked_docs),
-                    SlotSet("new_which_doctor", None),
-                    SlotSet("new_appointment_date", None),
-                    SlotSet("new_appointment_time", None),
+            return [SlotSet(IS_DOCTOR_FULL, True),
+                    SlotSet(FULLY_BOOKED_DOCS, fully_booked_docs),
+                    SlotSet(NEW_WHICH_DOCTOR, None),
+                    SlotSet(NEW_APPOINTMENT_DATE, None),
+                    SlotSet(NEW_APPOINTMENT_TIME, None),
                     ]
 
         buttons = [
@@ -118,7 +118,7 @@ class ActionAskUpdateOtp(Action):
         email = tracker.get_slot(EMAIL)
         is_sent, gen_otp = send_email("One-time Password(OTP)", email)
         dispatcher.utter_message(response='utter_update_appointment_otp_response')
-        return [SlotSet("generated_otp", gen_otp)]
+        return [SlotSet(GENERATED_OTP, gen_otp)]
 
 
 class ActionSubmitBookAppointmentForm(Action):
@@ -128,18 +128,18 @@ class ActionSubmitBookAppointmentForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        start_time, end_time = tracker.get_slot("new_appointment_time").split('-')
-        appointment_id = tracker.get_slot("select_appointment")
-        doctor_name = tracker.get_slot("new_which_doctor")
-        date = tracker.get_slot("new_appointment_date")
+        start_time, end_time = tracker.get_slot(NEW_APPOINTMENT_TIME).split('-')
+        appointment_id = tracker.get_slot(SELECT_APPOINTMENT)
+        doctor_name = tracker.get_slot(NEW_WHICH_DOCTOR)
+        date = tracker.get_slot(NEW_APPOINTMENT_DATE)
         is_updated = update_row(
-            "appointment_details",
-            conditions={"id": appointment_id},
+            APPOINTMENT_DETAILS,
+            conditions={ID: appointment_id},
             update_fields={
-                "start_time": start_time,
-                "end_time": end_time,
-                "doctor_name": doctor_name,
-                "date": date
+                START_TIME: start_time,
+                END_TIME: end_time,
+                DOCTOR_NAME: doctor_name,
+                DATE: date
             }
         )
         logger.debug(f'is_updated : {is_updated}')

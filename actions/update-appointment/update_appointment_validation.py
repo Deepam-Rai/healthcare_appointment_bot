@@ -18,14 +18,14 @@ class ValidateUpdateAppointmentForm(FormValidationAction):
                                   dispatcher: "CollectingDispatcher",
                                   tracker: "Tracker",
                                   domain: "DomainDict") -> Dict[str, str]:
-        gen_otp = tracker.get_slot("generated_otp")
+        gen_otp = tracker.get_slot(GENERATED_OTP)
         logger.error(gen_otp)
         logger.error(value)
         if value == gen_otp:
-            return {"update_otp": value}
+            return {UPDATE_OTP: value}
         else:
             dispatcher.utter_message(response="utter_incorrect_otp_response")
-            return {"requested_slot": "update_otp"}
+            return {REQUESTED_SLOT: UPDATE_OTP}
 
     async def validate_new_appointment_date(self, value: Text,
                                             dispatcher: "CollectingDispatcher",

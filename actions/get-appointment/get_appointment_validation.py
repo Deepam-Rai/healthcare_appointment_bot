@@ -20,8 +20,8 @@ class ValidateGetAppointmentForm(FormValidationAction):
             dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: DomainDict) -> List[Text]:
-        select_menu = tracker.get_slot("select_menu")
+        select_menu = tracker.get_slot(SELECT_MENU)
         slots = domain_slots.copy()
-        if select_menu == "add_details":
-            return ['appointment_details'] + slots
+        if select_menu == ADD_DETAILS:
+            return [APPOINTMENT_DETAILS] + slots
         return slots

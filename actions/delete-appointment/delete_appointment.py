@@ -1,12 +1,8 @@
-from typing import Any, Dict, List, Text
+from typing import Any, Text
 from rasa_sdk import Action, Tracker
 from rasa_sdk.events import FollowupAction, SlotSet
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.forms import FormValidationAction
-from rasa_sdk.types import DomainDict
-from utils.constants import *
 from utils.utils import *
-from pathlib import Path
 import logging
 from utils.database_utils import *
 logger = logging.getLogger(__name__)
@@ -33,7 +29,7 @@ class ActionAskDeleteOtp(Action):
         email = tracker.get_slot(EMAIL)
         is_sent, gen_otp = send_email("One-time Password(OTP)", email)
         dispatcher.utter_message(response='utter_delete_appointment_otp_response')
-        return [SlotSet("generated_otp", gen_otp)]
+        return [SlotSet(GENERATED_OTP, gen_otp)]
 
 
 class ActionSubmitDeleteAppointmentForm(Action):
@@ -43,8 +39,8 @@ class ActionSubmitDeleteAppointmentForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        select_appointment = int(tracker.get_slot("select_appointment"))
-        delete_status = delete_row("appointment_details", where_condition={"id": select_appointment})
+        select_appointment = int(tracker.get_slot(SELECT_APPOINTMENT))
+        delete_status = delete_row(APPOINTMENT_DETAILS, where_condition={ID: select_appointment})
         logger.debug(delete_status)
         if delete_status == True:
             dispatcher.utter_message(response="utter_row_deleted_response")

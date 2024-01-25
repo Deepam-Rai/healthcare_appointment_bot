@@ -19,11 +19,11 @@ class ActionAskSelectAppointment(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        show_doctor = tracker.get_slot("show_doctor")
-        email = tracker.get_slot('email')
-        values = get_values("appointment_details",
-                            column_names=['id', 'doctor_name','date', 'start_time', 'end_time'],
-                            where_condition={'user_id': email}
+        show_doctor = tracker.get_slot(SHOW_DOCTOR)
+        email = tracker.get_slot(EMAIL)
+        values = get_values(APPOINTMENT_DETAILS,
+                            column_names=[ID, DOCTOR_NAME, DATE, START_TIME, END_TIME],
+                            where_condition={USER_ID: email}
                             )
         value_buttons = [value[:3] for value in values]
 
@@ -67,23 +67,23 @@ class ActionSubmitGetAppointmentForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        select_menu = tracker.get_slot("select_menu")
+        select_menu = tracker.get_slot(SELECT_MENU)
         return_values = []
-        if select_menu == "add_details":
-            app_id = tracker.get_slot('select_appointment')
-            details = tracker.get_slot('appointment_details')
+        if select_menu == ADD_DETAILS:
+            app_id = tracker.get_slot(SELECT_APPOINTMENT)
+            details = tracker.get_slot(APPOINTMENT_DETAILS)
             if details:
                 is_updated = update_row(
-                    "appointment_details",
-                    conditions={"id": app_id},
-                    update_fields={"details": details},
+                    APPOINTMENT_DETAILS,
+                    conditions={ID: app_id},
+                    update_fields={DETAILS: details},
                 )
                 logger.error(is_updated)
                 dispatcher.utter_message(text="Your details have been saved successfully!")
             dispatcher.utter_message(text="Please choose an option to proceed:")
             dispatcher.utter_message(response="utter_show_menu")
-        elif select_menu == "delete":
+        elif select_menu == DELETE:
             return_values.append(FollowupAction("delete_appointment_form"))
-        elif select_menu == "update":
+        elif select_menu == UPDATE:
             return_values.append(FollowupAction("update_appointment_form"))
         return return_values

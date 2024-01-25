@@ -18,11 +18,9 @@ class ValidateDeleteAppointmentForm(FormValidationAction):
                                   dispatcher: "CollectingDispatcher",
                                   tracker: "Tracker",
                                   domain: "DomainDict") -> Dict[str, str]:
-        gen_otp = tracker.get_slot("generated_otp")
-        logger.error(gen_otp)
-        logger.error(value)
+        gen_otp = tracker.get_slot(GENERATED_OTP)
         if value == gen_otp:
-            return {"delete_otp": value}
+            return {DELETE_OTP: value}
         else:
             dispatcher.utter_message(response="utter_incorrect_otp_response")
-            return {"requested_slot": "delete_otp"}
+            return {REQUESTED_SLOT: DELETE_OTP}
