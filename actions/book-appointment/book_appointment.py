@@ -22,15 +22,24 @@ class ActionAskWhichDoctor(Action):
         values = get_values("doctor_details",
                             column_names=['name'])
         logger.debug(values)
+        fully_booked_docs = tracker.get_slot("fully_booked_docs")
         doctors_name = values
-        buttons = [
-            {
-                "title": doc[0],
-                "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-            } for doc in doctors_name
-        ]
+        if fully_booked_docs:
+            buttons = [
+                {
+                    "title": doc[0],
+                    "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
+                } for doc in doctors_name if doc[0] not in fully_booked_docs
+            ]
+        else:
+            buttons = [
+                {
+                    "title": doc[0],
+                    "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
+                } for doc in doctors_name if doc[0]
+            ]
         dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
-        return []
+        return [SlotSet("is_doc_full", False)]
 
 
 class ActionAskAppointmentDate(Action):
@@ -52,6 +61,7 @@ class ActionAskAppointmentTime(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         which_doctor = tracker.get_slot("which_doctor")
+        fully_booked_docs = tracker.get_slot("fully_booked_docs")
         appointment_date = tracker.get_slot("appointment_date")
         doctor_free_slots = get_values("doctor_details",
                                        column_names=["slots", "start_time", "end_time"],
@@ -62,12 +72,54 @@ class ActionAskAppointmentTime(Action):
                                               where_condition={"date": appointment_date, "doctor_name": which_doctor},
                                               group_by=['doctor_name']
                             )
+
         free_slots = get_time_interval(doctor_free_slots, booked_appointment_slots)
+
+        if free_slots == None:
+            dispatcher.utter_message(response="utter_doctor_occupied_response")
+            fully_booked_docs = fully_booked_docs.append(which_doctor) if fully_booked_docs else [which_doctor]
+            return [SlotSet("is_doctor_full", True),
+                    SlotSet("fully_booked_docs", fully_booked_docs),
+                    SlotSet("which_doctor", None),
+                    SlotSet("appointment_date", None),
+                    SlotSet("appointment_time", None),
+                    ]
+
         buttons = [
             {
                 "title": f"{slot[0]}-{slot[1]}",
-                "payload": f'/appointment_intent{{"appointment_time":f"{slot[0]}-{slot[1]}"}}',
+                "payload": f'/appointment_intent{{"appointment_time":"{slot[0]}-{slot[1]}"}}',
             } for slot in free_slots
         ]
         dispatcher.utter_message(response="utter_appointment_time", buttons=buttons)
+        return []
+
+
+class ActionSubmitBookAppointmentForm(Action):
+    def name(self) -> Text:
+        return "action_submit_book_appointment_form"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        start_time, end_time = tracker.get_slot("appointment_time").split('-')
+        doctor_name = tracker.get_slot("which_doctor")
+        user_id = tracker.get_slot("email")
+        date = tracker.get_slot("appointment_date")
+        is_inserted, id = insert_row(
+            "appointment_details",
+            start_time=start_time,
+            end_time=end_time,
+            doctor_name=doctor_name,
+            user_id=user_id,
+            date=date
+        )
+        logger.debug(f'is_inserted : {is_inserted}, ID : {id}')
+        dispatcher.utter_message(response="utter_success_appointment_booking_response",
+                                 start_time=start_time, end_time=end_time,
+                                 doctor_name=doctor_name,
+                                 date=date
+                                 )
+        dispatcher.utter_message(text="Please choose an option to proceed:")
+        dispatcher.utter_message(response="utter_show_menu")
         return []

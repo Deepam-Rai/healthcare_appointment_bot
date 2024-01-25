@@ -71,10 +71,14 @@ def get_timeslots(start_time=None, end_time=None, slots=None, booked_slots=None)
 
 
 def get_time_interval(doc_free_slots, booked_appointment_slots):
+    logger.error(doc_free_slots)
+    logger.error(booked_appointment_slots)
     doc_slots, doc_start_time, doc_end_time = doc_free_slots
     all_doc_slots = get_timeslots(start_time=doc_start_time, end_time=doc_end_time, slots=doc_slots, booked_slots=None)
     occupied_slots = get_timeslots(booked_slots=booked_appointment_slots)
-    set1 = {tuple(sublist) for sublist in all_doc_slots}
-    set2 = {tuple(sublist) for sublist in occupied_slots}
+    set1 = {tuple(sublist) for sublist in all_doc_slots} if all_doc_slots else set()
+    set2 = {tuple(sublist) for sublist in occupied_slots} if occupied_slots else set()
     free_slots = [list(sub) for sub in (set1 - set2)]
+    if free_slots == []:
+        return None
     return free_slots

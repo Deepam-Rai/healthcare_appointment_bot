@@ -93,6 +93,29 @@ responses:
   utter_delete_reason:
     - text: "Please enter your reason to delete the appointment:"
     
-  utter_delete_appointment_otp_response:
-    - text: "Please find the OTP in your registered mail id. Use the OTP to delete this appointment."
+  utter_existing_user_response:
+    - text: "This user already exists, please continue to login with this user email or choose a new email id to register."
     
+  utter_no_existing_user_response:
+    - text: "This user does not exist. Please recheck the email id before signing in or Register with a new email id to create a new account!"
+  
+  utter_success_appointment_booking_response:
+    - text: "Appointment Booking Successful!\nYou now have an appointment with Dr. {doctor_name} on {date}, during the slot {start_time}-{end_time}.\nPlease be there before {start_time}."
+  
+  utter_delete_appointment_otp_response:
+    - text: "To delete an appointment, verify with an OTP first.\nPlease find the One-time Password(OTP) sent to your registered email."
+    
+  utter_update_appointment_otp_response:
+    - text: "To update an existing appointment, verify with an OTP first.\nPlease find the One-time Password(OTP) sent to your registered email."
+    
+  utter_row_deleted_response:
+    - text: "Appointment has been deleted successfully!"
+  
+  utter_row_not_deleted_response:
+    - text: "We encountered an issue regarding deletion of this appointment. We will let you know shortly. Sorry for the inconvenience."
+
+  utter_update_reason:
+    - text: "Please enter the reason for you modifying the appointment:"
+    
+  utter_success_update_response:
+    - text: "Your selected appointment has been updated successfully!\nYou now have an appointment with Dr. {doctor_name} on {date}, during the slot {start_time}-{end_time}.\nPlease be there before {start_time}."

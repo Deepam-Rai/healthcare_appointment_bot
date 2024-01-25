@@ -135,7 +135,8 @@ def delete_row(
     try:
         query = f"DELETE FROM {table_name} \n"
         if where_condition:
-            where_pairs = [f"{key} = '{value}'" if value else f"{key} is NULL " for key, value in where_condition.items()]
+            where_pairs = [f"{key} = '{value}'" if value else f"{key} is NULL "
+                           for key, value in where_condition.items()]
             query += f"WHERE {'AND '.join(where_pairs)} \n"
         response = requests.post(
             url=f"{db_server_link}custom/",

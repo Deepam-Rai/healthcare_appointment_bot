@@ -33,18 +33,19 @@ class ActionAskOtp(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         email = tracker.get_slot(EMAIL)
         name = tracker.get_slot(NAME)
-        is_sent, gen_otp = send_email("One-time Password(OTP)", email)
+
+        is_sent, gen_otp = send_email(EMAIL_SUBJECT, email)
         if name is None:
-            name = get_values("user_details",
-                              column_names=['name'],
-                              where_condition={"id": email}
+            name = get_values(USER_DETAILS,
+                              column_names=[NAME],
+                              where_condition={ID: email}
                               )
             if name is None:
-                return [SlotSet("otp", -1)]
+                return [SlotSet(OTP, -1)]
             dispatcher.utter_message(response='utter_login_otp_response', name=name[0][0])
         else:
             dispatcher.utter_message(response='utter_register_otp_response')
-        return [SlotSet("generated_otp", gen_otp)]
+        return [SlotSet(GENERATED_OTP, gen_otp)]
 
 
 class ActionSubmitLoginForm(Action):
@@ -54,12 +55,12 @@ class ActionSubmitLoginForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        email = tracker.get_slot('email')
-        otp = tracker.get_slot('otp')
+        email = tracker.get_slot(EMAIL)
+        otp = tracker.get_slot(OTP)
         if otp != -1:
-            values = get_values("user_details",
-                                column_names=['name', 'phno', 'gender'] ,
-                                where_condition={"id": email}
+            values = get_values(USER_DETAILS,
+                                column_names=[NAME, PHNO, GENDER] ,
+                                where_condition={ID: email}
                           )
             dispatcher.utter_message(response="utter_login_confirmation_response")
             dispatcher.utter_message(response="utter_show_menu")
@@ -75,12 +76,12 @@ class ActionSubmitRegisterForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        name = tracker.get_slot('name')
-        email = tracker.get_slot('email')
-        phno = tracker.get_slot('phno')
-        gender = tracker.get_slot('gender')
+        name = tracker.get_slot(NAME)
+        email = tracker.get_slot(EMAIL)
+        phno = tracker.get_slot(PHNO)
+        gender = tracker.get_slot(GENDER)
         is_inserted, id = insert_row(
-            "user_details",
+            USER_DETAILS,
             name=name,
             id=email,
             phno=phno,

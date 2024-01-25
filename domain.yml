@@ -26,7 +26,10 @@ entities:
   - select_menu
   - select_appointment
   - appointment_time
-  -
+  - appointment_date
+  - new_which_doctor
+  - new_appointment_time
+  - new_appointment_date
 
 slots:
   email:
@@ -170,6 +173,65 @@ slots:
           - requested_slot: delete_otp
             active_loop: delete_appointment_form
 
+  is_doc_full:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: custom
+          
+  fully_booked_docs:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  
+  update_reason:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: update_reason
+            active_loop: update_appointment_form
+  
+  new_which_doctor:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: new_which_doctor
+        conditions:
+          - requested_slot: new_which_doctor
+            active_loop: update_appointment_form
+  
+  new_appointment_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: new_appointment_date
+            active_loop: update_appointment_form
+  
+  new_appointment_time:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: new_appointment_time
+        conditions:
+          - requested_slot: new_appointment_time
+            active_loop: update_appointment_form
+            
+  update_otp:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - requested_slot: update_otp
+            active_loop: update_appointment_form
+
 forms:
   login_form:
     required_slots:
@@ -201,6 +263,15 @@ forms:
       - delete_reason
       - delete_otp
 
+  update_appointment_form:
+    required_slots:
+      - select_appointment
+      - update_reason
+      - new_which_doctor
+      - new_appointment_date
+      - new_appointment_time
+      - update_otp
+
 actions:
   - action_greet
   - action_ask_otp
@@ -211,6 +282,7 @@ actions:
   - action_ask_which_doctor
   - action_ask_appointment_date
   - action_ask_appointment_time
+  - action_ask_appointment_details
   - action_ask_select_menu
   - action_ask_select_appointment
   - validate_get_appointment_form
@@ -218,9 +290,16 @@ actions:
   - action_ask_delete_reason
   - action_ask_delete_otp
   - action_submit_delete_appointment_form
+  - action_submit_book_appointment_form
   - validate_delete_appointment_form
   - action_submit_get_appointment_form
-#  - validate_book_appointment_form
+  - action_ask_update_reason
+  - action_ask_new_which_doctor
+  - action_ask_new_appointment_date
+  - action_ask_new_appointment_time
+  - action_ask_update_otp
+  - action_submit_update_appointment_form
+  - validate_update_appointment_form
 
 session_config:
   session_expiration_time: 60

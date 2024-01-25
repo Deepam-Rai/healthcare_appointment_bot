@@ -2,11 +2,15 @@ version: "3.1"
 
 rules:
 
+# general rule
 - rule: Say bye anytime the user says bye
   steps:
   - intent: goodbye
   - action: utter_goodbye
+  
+#######################################################################################################################
 
+# Login Form
 - rule: Login form activate
   condition:
   - active_loop: null
@@ -24,6 +28,9 @@ rules:
   - active_loop: null
   - action: action_submit_login_form
   
+#######################################################################################################################
+
+# Register Form
 - rule: Register form activate
   condition:
   - active_loop: null
@@ -41,6 +48,9 @@ rules:
   - active_loop: null
   - action: action_submit_register_form
   
+#######################################################################################################################
+
+# Book Appointment Form
 - rule: Book appointment form activate
   condition:
   - active_loop: null
@@ -56,8 +66,11 @@ rules:
   - action: book_appointment_form
   - active_loop: book_appointment_form
   - active_loop: null
-#  - action: action_submit_book_appointment_form
+  - action: action_submit_book_appointment_form
+  
+#######################################################################################################################
 
+# Get Appointment Form
 - rule: Get appointment form activate
   condition:
   - active_loop: null
@@ -74,7 +87,10 @@ rules:
   - active_loop: get_appointment_form
   - active_loop: null
   - action: action_submit_get_appointment_form
+  
+#######################################################################################################################
 
+# Delete Appointment Form
 - rule: Delete appointment form activate
   condition:
   - active_loop: null
@@ -91,3 +107,26 @@ rules:
   - active_loop: delete_appointment_form
   - active_loop: null
   - action: action_submit_delete_appointment_form
+  
+#######################################################################################################################
+
+# Update Appointment Form
+- rule: Update appointment form activate
+  condition:
+  - active_loop: null
+  steps:
+  - intent: update_appointment_intent
+  - action: update_appointment_form
+  - active_loop: update_appointment_form
+
+- rule: Update Appointment form deactivate
+  condition:
+  - active_loop: update_appointment_form
+  steps:
+  - action: update_appointment_form
+  - active_loop: update_appointment_form
+  - active_loop: null
+  - action: action_submit_update_appointment_form
+
+#######################################################################################################################
+

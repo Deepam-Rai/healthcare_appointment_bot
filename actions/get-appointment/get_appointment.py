@@ -11,27 +11,6 @@ import logging
 from utils.database_utils import *
 logger = logging.getLogger(__name__)
 
-#
-# class ActionAskShowDoctor(Action):
-#     def name(self) -> Text:
-#         return "action_ask_show_doctor"
-#
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-#         values = get_values("doctor_details",
-#                             column_names=['name'])
-#         logger.debug(values)
-#         doctors_name = values
-#         buttons = [
-#             {
-#                 "title": doc[0],
-#                 "payload": f'/appointment_intent{{"which_doctor":"{doc[0]}"}}',
-#             } for doc in doctors_name
-#         ]
-#         dispatcher.utter_message(response="utter_which_doctor", buttons=buttons)
-#         return []
-
 
 class ActionAskSelectAppointment(Action):
     def name(self) -> Text:
@@ -46,13 +25,13 @@ class ActionAskSelectAppointment(Action):
                             column_names=['id', 'doctor_name','date', 'start_time', 'end_time'],
                             where_condition={'user_id': email}
                             )
-        value_buttons = [l[:3] for l in values]
+        value_buttons = [value[:3] for value in values]
 
         buttons = [
                     {
-                        "title": f'Appointment ID : {l[0]}, Doctor Name : {l[1]}, Date : {l[2]}',
-                        "payload": f'/appointment_intent{{"select_menu":"{l[0]}"}}',
-                    } for l in value_buttons
+                        "title": f'Appointment ID : {value_button[0]}, Doctor Name : {value_button[1]}, Date : {value_button[2]}',
+                        "payload": f'/appointment_intent{{"select_appointment":"{value_button[0]}"}}',
+                    } for value_button in value_buttons
                 ]
         dispatcher.utter_message(text="Select an appointment to add details/update/delete it:", buttons=buttons)
 
@@ -88,13 +67,23 @@ class ActionSubmitGetAppointmentForm(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        app_id = tracker.get_slot('select_appointment')
-        details = tracker.get_slot('details')
-        if details:
-            is_updated = update_row(
-                "appointment_details",
-                conditions={"id": app_id},
-                update_fields={"details": details},
-            )
-            logger.error(is_updated)
-        return []
+        select_menu = tracker.get_slot("select_menu")
+        return_values = []
+        if select_menu == "add_details":
+            app_id = tracker.get_slot('select_appointment')
+            details = tracker.get_slot('appointment_details')
+            if details:
+                is_updated = update_row(
+                    "appointment_details",
+                    conditions={"id": app_id},
+                    update_fields={"details": details},
+                )
+                logger.error(is_updated)
+                dispatcher.utter_message(text="Your details have been saved successfully!")
+            dispatcher.utter_message(text="Please choose an option to proceed:")
+            dispatcher.utter_message(response="utter_show_menu")
+        elif select_menu == "delete":
+            return_values.append(FollowupAction("delete_appointment_form"))
+        elif select_menu == "update":
+            return_values.append(FollowupAction("update_appointment_form"))
+        return return_values
