@@ -26,9 +26,9 @@ def send_email(subject, recipient_email):
     this_path = Path(os.path.realpath(__file__))
     content = get_html_data(f"{this_path.parent.parent}\\utils\\user_mail.html")
     message_data.add_alternative(content.format(otp=otp, image_cid=image_cid), subtype="html")
-    # with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
-    #     smtp_server.login(username, password)
-    #     smtp_server.send_message(message_data)
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
+        smtp_server.login(username, password)
+        smtp_server.send_message(message_data)
     return True, otp
 
 
